@@ -3,7 +3,7 @@ const axios = require("axios");
 module.exports.config = {
  name: "nagadf",
  version: "1.0",
- hasPermssion: 0,
+ hasPermssion: 2,
  credits: "ULLASH",
  description: "Create a fake Nagad screenshot",
  usePrefix: true,
