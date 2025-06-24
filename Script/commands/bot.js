@@ -32,8 +32,8 @@ module.exports.handleEvent = async function({ api, event, args, Threads, Users }
      return api.sendMessage("type /help", threadID);
    };
   
-   if ((event.body.toLowerCase() == "sim") || (event.body.toLowerCase() == "simsimi")) {
-     return api.sendMessage("simsimi কমান্ড এড় নাই টাইপ করুন baby", threadID);
+   if ((event.body.toLowerCase() == "26 tarikh") || (event.body.toLowerCase() == "২৬ তারিখ")) {
+     return api.sendMessage("২৬ তারিখ.. এই বিশেষ দিনে শুধু আমার বস মুরসালিন নয় বরং সকল hsc আকাইম্মা দের কুরবানি.. অর্থাৎ সকলে রেডি থাকবেন..! 🤣🤝", threadID);
    };
   
    if ((event.body.toLowerCase() == "ওই কিরে") || (event.body.toLowerCase() == "oi keray") ||(event.body.toLowerCase() == "...") || (event.body.toLowerCase() == "...")) {
