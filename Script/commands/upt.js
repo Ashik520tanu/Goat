@@ -1,7 +1,7 @@
 module.exports.config = {
  name: "upt",
  version: "1.0.0",
- hasPermssion: 0,
+ hasPermssion: 2,
  credits: "Islamick Cyber Chat",
  description: "monitoring for your masanger robot 24 hour active",
  commandCategory: "monitor",
