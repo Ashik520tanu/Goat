@@ -1,212 +1,124 @@
-const fs = global.nodemodule["fs-extra"];
 module.exports.config = {
-  name: "Osex",
-  version: "1.0.1",
-  hasPermssion: 2,
-  credits: "hot nusu ☢️_made by𖣘 -ashik & murshalin⚠️_ ☢️",
-  description: "goisex",
-  commandCategory: "Noprefix",
-  usages: "noprefix",
-  cooldowns: 5,
+        name: "sex",
+        version: "1.0.2",
+        hasPermssion: 2,
+        credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
+        description: "FREE SET-UP MESSENGER",
+        commandCategory: "system",
+        usages: "[Name module]",
+        cooldowns: 5,
+        envConfig: {
+                autoUnsend: true,
+                delayUnsend: 20
+        }
 };
-module.exports.handleEvent = async function({ api, event, args, Threads, Users }) {
-  var { threadID, messageID, reason } = event;
-  const moment = require("moment-timezone");
-  const time = moment.tz("Asia/Dhaka").format("HH:MM:ss L");
-  var idgr = `${event.threadID}`;
-  var id = event.senderID;
-  var name = await Users.getNameUser(event.senderID);
 
-  var tl = ["iam a chatbot" ,];
-  var rand = tl[Math.floor(Math.random() * tl.length)]
+module.exports.languages = {
+ "en": {
+    "moduleInfo": "╭──────•◈•──────╮\n |        hot\n |●𝗡𝗮𝗺𝗲: •—» %1 «—•\n |●𝗨𝘀𝗮𝗴𝗲: %3\n |●𝗗𝗲𝘀𝗰𝗿𝗶p𝘁𝗶𝗼𝗻: %2\n |●𝗖𝗮𝘁𝗲𝗴𝗼𝗿𝘆: %4\n |●𝗪𝗮𝗶𝘁𝗶𝗻𝗴 𝘁𝗶𝗺𝗲: %5 seconds(s)\n |●𝗣𝗲𝗿𝗺𝗶𝘀𝘀𝗶𝗼𝗻: %6\n |𝗠𝗼𝗱𝘂𝗹𝗲 𝗰𝗼𝗱𝗲 𝗯𝘆\n |•—» ashik ッ «—•\n╰──────•◈•──────╯",
+    "helpList": '[ There are %1 commands on this bot, Use: "%2help nameCommand" to know how to use! ]',
+    "user": "User",
+        "adminGroup": "Admin group",
+        "adminBot": "Admin bot"
+  }
+};
 
-    if ((event.body.toLowerCase() == "sex") || (event.body.toLowerCase() == "Sex")) {
-     return api.sendMessage("https://i.imgur.com/HQy2K6D.jpeg", threadID);
-   };
+module.exports.handleEvent = function ({ api, event, getText }) {
+ const { commands } = global.client;
+ const { threadID, messageID, body } = event;
 
-    if ((event.body.toLowerCase() == "sexy") || (event.body.toLowerCase() == "Sexy")) {
-     return api.sendMessage("https://i.imgur.com/V1GpMaL.jpeg", threadID);
-   };
-   
-    if ((event.body.toLowerCase() == "hot pic") || (event.body.toLowerCase() == "Hot pic")) {
-     return api.sendMessage("https://i.imgur.com/CkOJcxX.jpeg", threadID);
-   };
-  
-   if ((event.body.toLowerCase() == "Nude") || (event.body.toLowerCase() == "nude")) {
-     return api.sendMessage("https://i.imgur.com/XihE7Br.jpeg", threadID);
-   };
-  
-   if ((event.body.toLowerCase() == "hot") || (event.body.toLowerCase() == "hot") ||(event.body.toLowerCase() == "Hot") || (event.body.toLowerCase() == "Hot")) {
-     return api.sendMessage("https://i.imgur.com/YBh3gVF.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "sax") || (event.body.toLowerCase() == "Sax")) {
-     return api.sendMessage("https://i.imgur.com/HFO4Y7o.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "mia") || (event.body.toLowerCase() == "Mia")) {
-     return api.sendMessage("https://i.imgur.com/xfS9jO9.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "hoty") || (event.body.toLowerCase() == "Hoty")) {
-     return api.sendMessage("https://i.imgur.com/Bz8zHdV.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "vagina") || (event.body.toLowerCase() == "Vagina")) {
-     return api.sendMessage("https://i.imgur.com/ZslPWcN.jpeg", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "viral") || (event.body.toLowerCase() == "Viral") || (event.body.toLowerCase() == "@viral") || (event.body.toLowerCase() == "Viral")) {
-     return api.sendMessage("https://i.imgur.com/WPOwy1i.jpeg",threadID);
-
-       
-   };
-
-   if ((event.body.toLowerCase() == "fmz") || (event.body.toLowerCase() == "Fmz")) {
-     return api.sendMessage("‎https://i.imgur.com/ZVKQXuB.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "হট") || (event.body.toLowerCase() == "হট")) {
-     return api.sendMessage("https://i.imgur.com/sWI1Y37.jpeg", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "সেক্স") || (event.body.toLowerCase() == "সেক্স")) {
-     return api.sendMessage("https://i.imgur.com/qQjLpC6.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "পিক") || (event.body.toLowerCase() == "পিক")) {
-     return api.sendMessage("https://i.imgur.com/jYjyNPM.jpeg", threadID);
-   };
-
-  
-   if ((event.body.toLowerCase() == "ভিডিও") || (event.body.toLowerCase() == "ভিডিও") || (event.body.toLowerCase() == "ভিডিও") || (event.body.toLowerCase() == "ভিডিও")) {
-     return api.sendMessage("https://i.imgur.com/tifGPfw.jpeg ", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "চোদা") || (event.body.toLowerCase() == "চোদা") || (event.body.toLowerCase() == "চোদা") || (event.body.toLowerCase() == "চোদা")) {
-     return api.sendMessage("️https://i.imgur.com/cDiw8bD.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "choda") || (event.body.toLowerCase() == "Choda") || (event.body.toLowerCase() == "chudi") || (event.body.toLowerCase() == "Choda")) {
-     return api.sendMessage("https://i.imgur.com/4onuyYI.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "uff") || (event.body.toLowerCase() == "Uff")) {
-     return api.sendMessage("https://i.imgur.com/ssGMGOA.jpeg", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "ahh") || (event.body.toLowerCase() == "Ahh")) {
-     return api.sendMessage("https://i.imgur.com/V1nzkVb.jpeg", threadID);
-   };
-  
-  if ((event.body.toLowerCase() == "fuck") || (event.body.toLowerCase() == "Fuck")) {
-     return api.sendMessage("https://i.imgur.com/AfjHwdL.jpeg", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "x") || (event.body.toLowerCase() == "X")) {
-     return api.sendMessage("https://i.imgur.com/OchGjtk.jpeg", threadID);
-   };
-
-  if ((event.body.toLowerCase() == "xn") || (event.body.toLowerCase() == "Xn")) {
-     return api.sendMessage("https://i.imgur.com/S3mR298.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "KISS ME") || (event.body.toLowerCase() == "kiss me")) {
-     return api.sendMessage("️https://i.imgur.com/xL5UM9r.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "কিস") || (event.body.toLowerCase() == "কিছ") || (event.body.toLowerCase() == "কিশ") || (event.body.toLowerCase() == "কিচ")) {
-     return api.sendMessage("️https://i.imgur.com/VRky6dt.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "sawya") || (event.body.toLowerCase() == "Sawya") || (event.body.toLowerCase() == "saua") || (event.body.toLowerCase() == "Saua") || (event.body.toLowerCase() == "Sauwa")) {
-     return api.sendMessage("️https://i.imgur.com/p9LGGon.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "দুদু") || (event.body.toLowerCase() == "দুদু")) {
-     return api.sendMessage("️https://i.imgur.com/vDq0q8O.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "মাই") || (event.body.toLowerCase() == "মাই") || (event.body.toLowerCase() == "তোর মাই")) {
-     return api.sendMessage("️https://i.imgur.com/Yopk7af.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "ভোদা") || (event.body.toLowerCase() == "বুদা")) {
-     return api.sendMessage("️https://i.imgur.com/MRwg5MJ.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "উফফ গরম") || (event.body.toLowerCase() == "ইসস গরম")) {
-     return api.sendMessage("️https://i.imgur.com/MyzRjDt.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "নুড") || (event.body.toLowerCase() == "নুঢ")) {
-     return api.sendMessage("️https://i.imgur.com/MyzRjDt.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "chudi") || (event.body.toLowerCase() == "tor nanire xudi")) {
-     return api.sendMessage("️https://i.imgur.com/MRwg5MJ.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "🥵") || (event.body.toLowerCase() == "🥵")) {
-     return api.sendMessage("️https://i.imgur.com/vDq0q8O.jpeg", threadID);
-   };
-  
-   if ((event.body.toLowerCase() == "fuck sneha") || (event.body.toLowerCase() == "Fuck sneha")) {
-     return api.sendMessage("️https://i.imgur.com/VRky6dt.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "haters pic") || (event.body.toLowerCase() == "Haters pic") || (event.body.toLowerCase() == "Haters")) {
-     return api.sendMessage("️https://i.imgur.com/AfjHwdL.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "ex") || (event.body.toLowerCase() == "Ex")) {
-     return api.sendMessage("https://i.imgur.com/MyzRjDt.jpeg", threadID);
-   };
-   
-   if ((event.body.toLowerCase() == "anime sex") || (event.body.toLowerCase() == "Anime sex") || (event.body.toLowerCase() == "cartoon sex") || (event.body.toLowerCase() == "Cartoon sex") || (event.body.toLowerCase() == "cartoon hot") || (event.body.toLowerCase() == "Cartoon hot")) {
-     return api.sendMessage("https://i.imgur.com/V1GpMaL.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "yaa fuck") || (event.body.toLowerCase() == "ya fuck") || (event.body.toLowerCase() == "Yaa fuck") || (event.body.toLowerCase() == "Ya fuck")) {
-     return api.sendMessage("https://i.imgur.com/CkOJcxX.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "sex koro") || (event.body.toLowerCase() == "sexy koro") || (event.body.toLowerCase() == "hot daw") || (event.body.toLowerCase() == "Hot koro") || (event.body.toLowerCase() == "Sex koro?")) {
-     return api.sendMessage("https://i.imgur.com/cDiw8bD.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "chudar chobi") || (event.body.toLowerCase() == "chudar pic")) {
-     return api.sendMessage("https://i.imgur.com/jYjyNPM.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "i fuck you") || (event.body.toLowerCase() == "fuck you") || (event.body.toLowerCase() == "I Fuck You") || (event.body.toLowerCase() == "চুদি") || (event.body.toLowerCase() == "i fuck you")) {
-     return api.sendMessage("https://i.imgur.com/ZVKQXuB.jpeg", threadID);
-   };
-
-     if ((event.body.toLowerCase() == "aso sex") || (event.body.toLowerCase() == "sex korba") || (event.body.toLowerCase() == "sex koriga") || (event.body.toLowerCase() == "hot koriga") || (event.body.toLowerCase() == "chudbo aso") || (event.body.toLowerCase() == "চুদবো আসো")) {
-     return api.sendMessage("https://i.imgur.com/OchGjtk.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "dhon") || (event.body.toLowerCase() == "Dhon")) {
-     return api.sendMessage("https://i.imgur.com/cDiw8bD.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "ধন") || (event.body.toLowerCase() == "দন")) {
-     return api.sendMessage("https://i.imgur.com/WPOwy1i.jpeg", threadID);
-   };
-
-   if ((event.body.toLowerCase() == "me & haters wife") || (event.body.toLowerCase() == "me and haters wife")) {
-     return api.sendMessage("https://i.imgur.com/cDiw8bD.jpeg", threadID);
-   };
-  mess = "{name}"
-  
-  if (event.body.indexOf("Bot") == 0 || (event.body.indexOf("bot") == 0)) {
-    var msg = {
-      body: `${name}, ${rand}`
-    }
-    return api.sendMessage(msg, threadID, messageID);
-  };
-
+ if (!body || typeof body == "undefined" || body.indexOf("sex") != 0) return;
+ const splitBody = body.slice(body.indexOf("sex")).trim().split(/\s+/);
+ if (splitBody.length == 1 || !commands.has(splitBody[1].toLowerCase())) return;
+ const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+ const command = commands.get(splitBody[1].toLowerCase());
+ const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
+ return api.sendMessage(getText("moduleInfo", command.config.name, command.config.description, `${prefix}${command.config.name} ${(command.config.usages) ? command.config.usages : ""}`, command.config.commandCategory, command.config.cooldowns, ((command.config.hasPermssion == 0) ? getText("user") : (command.config.hasPermssion == 1) ? getText("adminGroup") : getText("adminBot")), command.config.credits), threadID, messageID);
 }
 
-module.exports.run = function({ api, event, client, __GLOBAL }) { }
+module.exports. run = function({ api, event, args, getText }) {
+  const axios = require("axios");
+  const request = require('request');
+  const fs = require("fs-extra");
+ const { commands } = global.client;
+ const { threadID, messageID } = event;
+ const command = commands.get((args[0] || "").toLowerCase());
+ const threadSetting = global.data.threadData.get(parseInt(threadID)) || {};
+ const { autoUnsend, delayUnsend } = global.configModule[this.config.name];
+ const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX : global.config.PREFIX;
+if (args[0] == "all") {
+    const command = commands.values();
+    var group = [], msg = "";
+    for (const commandConfig of command) {
+      if (!group.some(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase())) group.push({ group: commandConfig.config.commandCategory.toLowerCase(), cmds: [commandConfig.config.name] });
+      else group.find(item => item.group.toLowerCase() == commandConfig.config.commandCategory.toLowerCase()).cmds.push(commandConfig.config.name);
+    }
+    group.forEach(commandGroup => msg += `❄️ ${commandGroup.group.charAt(0).toUpperCase() + commandGroup.group.slice(1)} \n${commandGroup.cmds.join(' • ')}\n\n`);
+
+    return axios.get('https://loidsenpaihelpapi.miraiandgoat.repl.co').then(res => {
+    let ext = res.data.data.substring(res.data.data.lastIndexOf(".") + 1);
+      let admID = "61551846081032";
+
+      api.getUserInfo(parseInt(admID), (err, data) => {
+      if(err){ return console.log(err)}
+     var obj = Object.keys(data);
+    var firstname = data[obj].name.replace("@", "");
+    let callback = function () {
+        api.sendMessage({ body:`✿🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃✿\n\n` + msg + `✿══════════════✿\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ashik & murshalin ッ\n│𝗧𝗢𝗧𝗔𝗟 :  ${commands.size}\n————————————`, mentions: [{
+                           tag: firstname,
+                           id: admID,
+                           fromIndex: 0,
+                 }],
+            attachment: fs.createReadStream(__dirname + `/cache/472.${ext}`)
+        }, event.threadID, (err, info) => {
+        fs.unlinkSync(__dirname + `/cache/472.${ext}`);
+        if (autoUnsend == false) {
+            setTimeout(() => {
+                return api.unsendMessage(info.messageID);
+            }, delayUnsend * 1000);
+        }
+        else return;
+    }, event.messageID);
+        }
+         request(res.data.data).pipe(fs.createWriteStream(__dirname + `/cache/472.${ext}`)).on("close", callback);
+     })
+      })
+};
+ if (!command) {
+  const arrayInfo = [];
+  const page = parseInt(args[0]) || 1;
+    const numberOfOnePage = 15;
+    let i = 0;
+    let msg = "";
+
+    for (var [name, value] of (commands)) {
+      name += ``;
+      arrayInfo.push(name);
+    }
+
+    arrayInfo.sort((a, b) => a.data - b.data);  
+const first = numberOfOnePage * page - numberOfOnePage;
+   i = first;
+   const helpView = arrayInfo.slice(first, first + numberOfOnePage);
+
+
+   for (let cmds of helpView) msg += `•—»[ ${cmds} ]«—•\n`;
+    const siu = `╭──────•◈•──────╮\n |        hot \n |   🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃 + hot pic       \n╰──────•◈•──────╯`;
+const text = `╭──────•◈•──────╮\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ ashik & murshalin ッ\n│𝗧𝗢𝗧𝗔𝗟 : [${arrayInfo.length}]\n│📛🄿🄰🄶🄴📛 :  [${page}/${Math.ceil(arrayInfo.length/numberOfOnePage)}]\n╰──────•◈•──────╯`; 
+    var link = [
+"https://i.imgur.com/VRky6dt.jpeg", "https://i.imgur.com/p9LGGon.jpeg", "https://i.imgur.com/vDq0q8O.jpeg", "https://i.imgur.com/Yopk7af.jpeg", "https://i.imgur.com/MRwg5MJ.jpeg", "https://i.imgur.com/MyzRjDt.jpeg", "https://i.imgur.com/MyzRjDt.jpeg", "https://i.imgur.com/MRwg5MJ.jpeg", "https://i.imgur.com/MRwg5MJ.jpeg", "https://i.imgur.com/Yopk7af.jpeg", "https://i.imgur.com/vDq0q8O.jpeg", "https://i.imgur.com/p9LGGon.jpeg", "https://i.imgur.com/VRky6dt.jpeg", "https://i.imgur.com/xL5UM9r.jpeg", "https://i.imgur.com/S3mR298.jpeg", "https://i.imgur.com/OchGjtk.jpeg", "https://i.imgur.com/AfjHwdL.jpeg", "https://i.imgur.com/V1nzkVb.jpeg", "https://i.imgur.com/ssGMGOA.jpeg", "https://i.imgur.com/4onuyYI.jpeg", "https://i.imgur.com/cDiw8bD.jpeg", "https://i.imgur.com/tifGPfw.jpeg", "https://i.imgur.com/jYjyNPM.jpeg", "https://i.imgur.com/qQjLpC6.jpeg", "https://i.imgur.com/sWI1Y37.jpeg", "https://i.imgur.com/ZVKQXuB.jpeg", "https://i.imgur.com/WPOwy1i.jpeg", "https://i.imgur.com/ZslPWcN.jpeg", "https://i.imgur.com/Bz8zHdV.jpeg", "https://i.imgur.com/xfS9jO9.jpeg", "https://i.imgur.com/HFO4Y7o.jpeg", "https://i.imgur.com/YBh3gVF.jpeg", "https://i.imgur.com/XihE7Br.jpeg", "https://i.imgur.com/CkOJcxX.jpeg", "https://i.imgur.com/V1GpMaL.jpeg", "https://i.imgur.com/HQy2K6D.jpeg", 
+"https://i.imgur.com/OchGjtk.jpeg",
+"https://i.imgur.com/S3mR298.jpeg",
+"https://i.imgur.com/xL5UM9r.jpeg",
+    ]
+     var callback = () => api.sendMessage({ body: siu + "\n\n" + msg  + text, attachment: fs.createReadStream(__dirname + "/cache/loidbutter.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/loidbutter.jpg"), event.messageID);
+    return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/loidbutter.jpg")).on("close", () => callback());
+ }
+const leiamname = getText("moduleInfo", command.config.name, command.config.description, `${(command.config.usages) ? command.config.usages : ""}`, command.config.commandCategory, command.config.cooldowns, ((command.config.hasPermssion == 0) ? getText("user") : (command.config.hasPermssion == 1) ? getText("adminGroup") : getText("adminBot")), command.config.credits);
+
+  var link = [
+"https://i.postimg.cc/QdgH08j6/Messenger-creation-C2-A39-DCF-A8-E7-4-FC7-8715-2559476-FEEF4.gif",
+  ]
+    var callback = () => api.sendMessage({ body: leiamname, attachment: fs.createReadStream(__dirname + "/cache/loidbutter.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/loidbutter.jpg"), event.messageID);
+return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/loidbutter.jpg")).on("close", () => callback());
+};
