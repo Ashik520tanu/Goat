@@ -106,7 +106,7 @@ const first = numberOfOnePage * page - numberOfOnePage;
     const siu = `╭──────•◈•──────╮\n |        hot \n |   🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃 + hot pic       \n╰──────•◈•──────╯`;
 const text = `╭──────•◈•──────╮\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ ashik & murshalin ッ\n│𝗧𝗢𝗧𝗔𝗟 : [${arrayInfo.length}]\n│📛🄿🄰🄶🄴📛 :  [${page}/${Math.ceil(arrayInfo.length/numberOfOnePage)}]\n╰──────•◈•──────╯`; 
     var link = [
-"https://www.xnxx.tv/video-le6zf0d/teens_do_porn_ass_katya_rodriguez_and_aiden_starr_amateur_milf_screaming_orgasm ", "", 
+"https://www.xnxx.tv/video-le6zf0d/teens_do_porn_ass_katya_rodriguez_and_aiden_starr_amateur_milf_screaming_orgasm " ,];
 "https://www.xnxx.tv/video-puba570/arab_pornstar_mia_khalifa_gets_fucked_real_hard",
 "https://www.xnxx.tv/video-pu2lh90/brunette_teen_with_huge_tits_mia_khalifa_fucks_a_huge_white_cock_-_teen_porn",
 "https://www.xnxx.tv/video-pu62l46/brunette_teen_with_huge_tits_fucked_from_behind_by_a_big_white_cock_-_teen_porn",
