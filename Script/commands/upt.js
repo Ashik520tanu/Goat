@@ -12,7 +12,7 @@ module.exports.config = {
 };
 
 module.exports.run = async function ({ api, event, args }) {
-  const apiLink = "https://web-api-delta.vercel.app/upt"; // 🔥 এখানে তোমার API URL বসাও
+  const apiLink = "https://goat-1yjo.onrender.com"; // 🔥 এখানে তোমার API URL বসাও
 
   if (!args.length) {
     return api.sendMessage(
