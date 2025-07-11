@@ -31,9 +31,9 @@ const emojiAudioMap = {
 
   },
 
-  "😡": {
+  "🤬","😡","😠","😾": {
 
-    url: "https://drive.google.com/uc?export=download&id=1S_I7b3_f4Eb8znzm10vWn99Y7XHaSPYa",
+    url: "https://cdn.fbsbx.com/v/t59.3654-21/517354682_1403198404063645_4609045106148255444_n.mp4/audioclip-1752216615000-8429.mp4?_nc_cat=106&ccb=1-7&_nc_sid=d61c36&_nc_eui2=AeGHSmQ43frP6uWCwT6vOFtKE7wMdwsiKwgTvAx3CyIrCCRjb__D24JTY9-0i8PMi3kQ8qQtXGDAfl8AbN3jz0WO&_nc_ohc=OIO9njbTy2YQ7kNvwHiBSuD&_nc_oc=AdnQzBadb6oGfV1hvFiXmk4fJd1yWWRSZO47WBvzUtNLYwdFLoa0eeuWWmlbFBKv__Y&_nc_zt=28&_nc_ht=cdn.fbsbx.com&_nc_gid=STFJF08WMZhP4M6hEbEV2g&oh=03_Q7cD2wEl4MRina0bjh396kGPiXZK8uH0P-LnqGPL8Dqx4wakrQ&oe=6872ABC6&dl=1,
 
     caption: "রাগ কমাও, মাফ করাই বড়ত্ব... 😡"
 
