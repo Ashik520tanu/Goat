@@ -81,7 +81,7 @@ const emojiAudioMap = {
 
   "🙂": {
 
-    url: "https://drive.google.com/uc?export=download&id=1_sehHc-sDtzuqyB2kL_XGMuvm2Bv-Dqc",
+    url: "https://cdn.fbsbx.com/v/t59.3654-21/518103422_770506668875168_8400071925893932225_n.mp4/audioclip-1752215226000-3181.mp4?_nc_cat=104&ccb=1-7&_nc_sid=d61c36&_nc_eui2=AeH4TFXdq4ocx_s5dvqAPfkJ_NBVDpPGcpf80FUOk8Zyl1WR-xp-jmhxEq1unuBbicLiEwS90ZRWiKst7SbBxHcb&_nc_ohc=4cCCKBwUakAQ7kNvwGrGdm6&_nc_oc=Adk0zQOmjVeEcIHnsb5WD0omfuBRTxXmj1s3cdsIN9u1pM80xgQF2rTtIncSVrJKng4&_nc_zt=28&_nc_ht=cdn.fbsbx.com&_nc_gid=UAX9xqbneiaMGzuc2s2F2g&oh=03_Q7cD2wGJgcnBvOOZwOnEbB6gOHQH1YPfYuWOGSEvSRZexrdwtQ&oe=68727279&dl=1",
 
     caption: "তুমি কি আধো আমাকে ভালোবাসো ... 🙂"
 
