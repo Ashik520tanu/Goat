@@ -40,7 +40,7 @@ module.exports.run = async function({ api, event }) {
         attachment: fs.createReadStream(__dirname + "/cache/1.png")
     }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/1.png"));
   
-    return request(encodeURI(`https://i.imgur.com/2DxdmNS.jpeg`))
+    return request(encodeURI(`https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F`))
         .pipe(fs.createWriteStream(__dirname + '/cache/1.png'))
         .on('close', () => callback());
 };
