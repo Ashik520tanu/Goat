@@ -61,12 +61,12 @@ users.needObject=Have to be an Object
 
 handleCommand.userBanned=বক্স এ আবলামি করার অপরাধে তোরে  বেন করে দেওয়া হয়েছে-!!🚫
 handleCommand.threadBanned=Group Has Been Banned..!⛔️\nPlease Contact Owner For Unban ⚠️
-handleCommand.commandNotExist=এই সালা \nআমার কাছে এই কমান্ড নাই.\n\nCould it be— \n\n•—» %1  «—•\n\nতাইলে কইত্তে দেবো".
+handleCommand.commandNotExist=এই সালা😒 \n\nআমার কাছে এই কমান্ড নাই😑\n\nতাইলে কইত্তে দেবো🙆🤷".
 handleCommand.commandThreadBanned=Your thread is unable to use command "%1"
 handleCommand.commandUserBanned=You are unable to use command "%1"
 handleCommand.threadNotAllowNSFW=This Commnd Only use Andmi
 handleCommand.cantGetInfoThread=Can't get your thread's info, error: %1
-handleCommand.permssionNotEnough="%1"\n⎯⎯⎯⎯⎯⎯\n\nএই সালা তুই কেডা\n⎯⎯⎯⎯⎯⎯\n"%1"\n⎯⎯⎯⎯⎯⎯\n✨ শুধু আমার বস 👑আশিক👑 এই কমান্ড ব্যবহার করতে পারবেন।\n✨ তুই এই কমান্ড ব্যবহার করতে পারবি না 🙂🐸...𝐢𝐭'𝐳 𝐃𝐞𝐯𝐢𝐥 𝐛𝐨𝐭|ᵃˢʰⁱᵏ
+handleCommand.permssionNotEnough="এই সালা তুই কেডা😒\n\n✨ শুধু আমার বস 👑আশিক👑 এই কমান্ড ব্যবহার করতে পারবেন।\n\n✨ তুই এই কমান্ড ব্যবহার করতে পারবি না 🙂🐸\n\nযা এনতে দুরে যাইয়া মর\nতুই মরলে ৪০শা খামু😁\n\n𝐢𝐭'𝐳 𝐃𝐞𝐯𝐢𝐥 𝐛𝐨𝐭|ᵃˢʰⁱᵏ
 handleCommand.cantSetMessageReaction=Having some unexpected error at setMessageReaction, error: %1
 handleCommand.executeCommand=[ %1 ] Command used: %2 by user: %3 at thread: %4 | Args included: %5 | Processing time: %6ms
 handleCommand.commandError=Having some unexpected error when using command %1, error: %2
