@@ -1,7 +1,7 @@
 module.exports.config = {
   'name': "haters",
   'version': "1.0.0",
-  'hasPermssion': 0x0,
+  'hasPermssion': 2,
   'credits': "ULLASH",
   'description': "haters কামলা মাগির ছেলেদের মায়রে গন ধর্ষণ করি ডিকোড কামলাদের মায়রে ২টাকা দামের কন্ডম দিয়া চুদি",
   'commandCategory': "Image",
