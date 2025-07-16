@@ -107,7 +107,7 @@ module.exports.run = async ({ api, event, args }) => {
 
  if (isVideo && duration > 60) {
  // Use Catbox
- const catRes = await axios.get(`${imgurAPII}/catbox?url=${encodeURIComponent(imageUrl)}`);
+ const catRes = await axios.get(`${imgurAPI}/catbox?url=${encodeURIComponent(imageUrl)}`);
  finalUrl = catRes.data.url || catRes.data.link;
  } else {
  // Use Imgur
