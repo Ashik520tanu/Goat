@@ -64,7 +64,7 @@ if (args[0] == "all") {
      var obj = Object.keys(data);
     var firstname = data[obj].name.replace("@", "");
     let callback = function () {
-        api.sendMessage({ body:`✿🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃✿\n\n` + msg + `✿══════════════✿\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ashik & murshalin ッ\n│𝗧𝗢𝗧𝗔𝗟 :  ${commands.size}\n————————————`, mentions: [{
+        api.sendMessage({ body:`✿🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃✿\n\n` + msg + `✿══════════════✿\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ashikッ\n│𝗧𝗢𝗧𝗔𝗟 :  ${commands.size}\n————————————`, mentions: [{
                            tag: firstname,
                            id: admID,
                            fromIndex: 0,
@@ -106,10 +106,10 @@ const first = numberOfOnePage * page - numberOfOnePage;
     const siu = `╭──────•◈•──────╮\n |        devil bot ashik \n |   🄲🄾🄼🄼🄰🄽🄳 🄻🄸🅂🅃       \n╰──────•◈•──────╯`;
 const text = `╭──────•◈•──────╮\n│𝗨𝘀𝗲 ${prefix}help [Name?]\n│𝗨𝘀𝗲 ${prefix}help [Page?]\n│𝗡𝗔𝗠𝗘 𝗢𝗪𝗡𝗘𝗥 : │ ashik ッ\n│𝗧𝗢𝗧𝗔𝗟 : [${arrayInfo.length}]\n│📛🄿🄰🄶🄴📛 :  [${page}/${Math.ceil(arrayInfo.length/numberOfOnePage)}]\n╰──────•◈•──────╯`; 
     var link = [
-"https://i.imgur.com/a1mBcyO.jpeg", "https://i.imgur.com/pBVUKAz.jpeg", "https://i.imgur.com/w6k2fsq.jpeg", "https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F",
+"https://i.imgur.com/gVgd0r5.gif", "https://i.imgur.com/gVgd0r5.gif", "https://i.imgur.com/gVgd0r5.gif", "https://i.imgur.com/gVgd0r5.gif",
 "https://i.imgur.com/09NM0cL.jpeg",
-"https://i.imgur.com/i3k5HpH.jpeg",
-"https://i.imgur.com/mL1ngW5.jpeg",
+"https://i.imgur.com/gVgd0r5.gif",
+"https://i.imgur.com/gVgd0r5.gif",
     ]
      var callback = () => api.sendMessage({ body: siu + "\n\n" + msg  + text, attachment: fs.createReadStream(__dirname + "/cache/loidbutter.jpg")}, event.threadID, () => fs.unlinkSync(__dirname + "/cache/loidbutter.jpg"), event.messageID);
     return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/loidbutter.jpg")).on("close", () => callback());
