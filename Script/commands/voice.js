@@ -41,7 +41,7 @@ const emojiAudioMap = {
  },
  "🙂": {
  url: "https://drive.google.com/file/d/12MWv6GwjmA9kYzQXeUjMx2huIR5KGxUo/view?usp=drivesdk",
- caption: "তুমার নানির হেডা ... 🙂"
+ caption: "আবাল ... 🙂"
  }
 };
 
