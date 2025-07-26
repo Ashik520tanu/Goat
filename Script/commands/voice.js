@@ -40,7 +40,7 @@ const emojiAudioMap = {
  caption: "feel this song... 💔"
  },
  "🙂": {
- url: "https://drive.google.com/file/d/12MWv6GwjmA9kYzQXeUjMx2huIR5KGxUo/view?usp=drivesdk",
+ url: "https://drive.usercontent.google.com/u/0/uc?id=1-Pdww0LPRMvLhgmL_C4HWHfT320Bp8-v&export=download",
  caption: "আবাল ... 🙂"
  }
 };
