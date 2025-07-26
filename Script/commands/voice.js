@@ -40,7 +40,7 @@ const emojiAudioMap = {
  caption: "feel this song... 💔"
  },
  "🙂": {
- url: "https://cdn.fbsbx.com/v/t59.3654-21/518103422_770506668875168_8400071925893932225_n.mp4/audioclip-1752215226000-3181.mp4?_nc_cat=104&ccb=1-7&_nc_sid=d61c36&_nc_eui2=AeH4TFXdq4ocx_s5dvqAPfkJ_NBVDpPGcpf80FUOk8Zyl1WR-xp-jmhxEq1unuBbicLiEwS90ZRWiKst7SbBxHcb&_nc_ohc=de6ZHoMQ5zUQ7kNvwFoFtRi&_nc_oc=AdlO8MkVZ3ZrqqQA2ZMbZpnhw0Yf6_aOPvAETQekbb0-cV1GrcjPOuVC7xJwIAKfSXc&_nc_zt=28&_nc_ht=cdn.fbsbx.com&_nc_gid=OEJRVgHtqzuegC7zw0IAFA&oh=03_Q7cD2wF27mYX4Rh7p6cJWyZWZ4-u2rjmWRCyhQEJsVXm82zRTg&oe=68769F39&dl=1",
+ url: "https://files.catbox.moe/hn9c1y.mp3",
  caption: "তুমার নানির হেডা ... 🙂"
  }
 };
