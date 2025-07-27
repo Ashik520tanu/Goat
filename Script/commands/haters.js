@@ -27,7 +27,7 @@ module.exports.run = async ({
   const _0x38bb2b = global.nodemodule["fs-extra"];
   var _0x546df1 = ["👑—͟͟͞͞boss ashik 👑_এর haters দের জন্য"];
   var _0x316817 = _0x546df1[Math.floor(Math.random() * _0x546df1.length)];
-  var _0x1f0f74 = ["https://i.imgur.com/LYHe9Bc.mp4", "https://i.imgur.com/LYHe9Bc.mp4", "https://i.imgur.com/LYHe9Bc.mp4", "https://i.imgur.com/x4RP7p6.mp4"];
+  var _0x1f0f74 = ["https://i.imgur.com/rm09uEj.mp4", "https://i.imgur.com/NpqYepG.mp4", "https://i.imgur.com/Edanmmb.mp4", "https://i.imgur.com/93IUcmO.mp4"];
   var _0x3bb130 = () => _0x4fc9c7.sendMessage({
     'body': "「 " + _0x316817 + " 」",
     'attachment': _0x38bb2b.createReadStream(__dirname + "/cache/15.mp4")
