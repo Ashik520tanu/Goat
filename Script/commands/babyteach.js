@@ -3,7 +3,7 @@ const path = __dirname + "/../../cache/baby_memory.json";
 const countPath = __dirname + "/../../cache/baby_teach_count.json";
 
 module.exports.config = {
-  name: "baby",
+  name: "baby teach",
   version: "1.3",
   hasPermission: 0,
   credits: "Ashuu",
