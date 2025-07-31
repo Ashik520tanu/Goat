@@ -3,16 +3,14 @@ module.exports.config: {
     version: "1.0.0",
     credits: "ashuu",
     haspermission: 0,
-    shortDescription: "Spin to win or lose points",
-    longDescription: "Spin a given point amount and win or lose randomly",
+    Description: "Spin to win or lose points",
     commandCategory: "game",
     guide: {
       en: "/spin [amount] - spin with points\n/spintk - check your balance"
     }
   },
 
-  onStart: async function () {
-    global.userPoints = {}; // Store user balances
+  onStart: async function () {global.userPoints = {}; // Store user balances
   },
 
   onChat: async function ({ event, message, args }) {
