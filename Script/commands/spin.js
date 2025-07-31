@@ -1,40 +1,54 @@
-module.exports.config: {
-    name: "spin",
-    version: "1.0.0",
-    credits: "ashuu",
-    haspermission: 0,
-    Description: "Spin to win or lose points",
-    commandCategory: "game",
-    guide: {
-      en: "/spin [amount] - spin with points\n/spintk - check your balance"
-    }
-  },
+const fs = require("fs");
+const path = __dirname + "/cache/spin.json";
 
-  onStart: async function () {global.userPoints = {}; // Store user balances
-  },
+if (!fs.existsSync(path)) fs.writeFileSync(path, "{}");
 
-  onChat: async function ({ event, message, args }) {
-    const { threadID, senderID, body } = event;
-    const command = body.trim().split(" ")[0].toLowerCase();
+module.exports.config = {
+  name: "spin",
+  version: "1.0.0",
+  hasPermission: 0,
+  credits: "ChatGPT",
+  description: "পয়েন্ট দিয়ে স্পিন করুন",
+  commandCategory: "game",
+  usages: "[amount]",
+  cooldowns: 3
+};
 
-    if (!global.userPoints[senderID]) global.userPoints[senderID] = 20000;
+module.exports.run = async ({ api, event, args }) => {
+  const userID = event.senderID;
+  const spinData = JSON.parse(fs.readFileSync(path));
+  let points = spinData[userID] || 20000;
 
-    if (command === "/spintk") {
-      return message.reply(`💰 Your current balance: ${global.userPoints[senderID]} points`);
-    }
+  // যদি /spintk হয়
+  if (args.length === 0) {
+    return api.sendMessage(`💰 আপনার মোট পয়েন্ট: ${points}`, event.threadID, event.messageID);
+  }
 
-    if (command === "/spin") {
-      const bet = parseInt(args[0]);
-      if (isNaN(bet) || bet <= 0) return message.reply("⛔— Please enter a valid point amount to spin.");
-      if (bet > global.userPoints[senderID]) return message.reply("☹️You don't have enough points.");
+  const bet = parseInt(args[0]);
+  if (isNaN(bet) || bet <= 0) {
+    return api.sendMessage("❌ দয়া করে একটি সঠিক পরিমাণ দিন। যেমন: /spin 500", event.threadID, event.messageID);
+  }
 
-      const win = Math.random() < 0.5;global.userPoints[senderID] += bet;
-        message.reply(`🎉 You WON! +{bet} points!\n💰 New Balance: global.userPoints[senderID]`);
-       else 
-        global.userPoints[senderID] -= bet;
-        if (global.userPoints[senderID] <= 0) 
-          global.userPoints[senderID] = 20000;
-          return message.reply("💔 You lost and your balance reached 0.🥺”🥳 Auto refill: 20000 points.");
-        
-        message.reply(`🥺 You LOST! -{bet} points.\n💰 New Balance: ${global.userPoints[senderID]}`);
-      };
+  if (points <= 0) {
+    points = 20000;
+  }
+
+  if (bet > points) {
+    return api.sendMessage(`❌ আপনার কাছে ${points} পয়েন্ট আছে, কিন্তু আপনি ${bet} দিতে চাচ্ছেন।`, event.threadID, event.messageID);
+  }
+
+  const win = Math.random() < 0.5;
+  if (win) {
+    points += bet;
+    msg = `🎉 আপনি জিতেছেন!\n➕ পেয়েছেন: ${bet} পয়েন্ট\n💰 মোট পয়েন্ট: ${points}`;
+  } else {
+    points -= bet;
+    msg = `😢 আপনি হেরেছেন!\n➖ কাটা গেছে: ${bet} পয়েন্ট\n💰 মোট পয়েন্ট: ${points <= 0 ? 20000 : points}`;
+  }
+
+  // পয়েন্ট ০ হলে আবার ২০০০০ দিয়ে শুরু
+  spinData[userID] = points <= 0 ? 20000 : points;
+  fs.writeFileSync(path, JSON.stringify(spinData, null, 2));
+
+  return api.sendMessage(msg, event.threadID, event.messageID);
+};
