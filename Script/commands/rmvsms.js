@@ -1,19 +1,26 @@
-module.exports.config: {
-    name: "reactDelete",
-    version: "1.0.0",
-    author: "ashuu",
-    haspermission: 0,
-    shortDescription: "Delete message on 👍 reaction",
-    longDescription: "Deletes a bot message when someone reacts with 👍",
-    CommandCategory: "system",
-  },
+module.exports.config = {
+  name: "unsendOnReact",
+  version: "1.0.0",
+  hasPermission: 2,
+  credits: "ChatGPT",
+  description: "রিয়্যাকশন দিলে মেসেজ আনসেন্ট করে",
+  commandCategory: "system",
+  usages: "N/A",
+  cooldowns: 0
+};
 
-  onReaction: async function ({ api, event }) {
-    const { messageID, userID, reaction } = event;
+// Mirai-এর handleReaction ফাংশন
+module.exports.handleReaction = async function ({ api, event }) {
+  const allowedReacts = ["❤", "👍", "🙀", "😿", "😾"];
 
-    if (reaction === '👍') {
-      try {
-        await api.unsendMessage(messageID);
-      } catch (err) {
-        console.log("❌ Failed to delete message:", err);
-      };
+  // যদি রিয়্যাকশন অনুমোদিত ইমোজি হয়
+  if (allowedReacts.includes(event.reaction)) {
+    try {
+      await api.unsendMessage(event.messageID);
+    } catch (err) {
+      console.log("❌ আনসেন্ট করা যায়নি:", err);
+    }
+  }
+};
+
+module.exports.run = () => {};
