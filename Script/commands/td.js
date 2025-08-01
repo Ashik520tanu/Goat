@@ -3,124 +3,115 @@ const path = __dirname + "/td_data.json";
 
 module.exports.config = {
   name: "td",
-  version: "1.1.0",
+  version: "2.1.0",
   hasPermssion: 0,
-  credits: "ChatGPT-BD",
-  description: "Truth or Dare game",
-  commandCategory: "Fun",
-  usages: "[truth/dare/rules/addtd/remove/list]",
-  cooldowns: 3,
+  credits: "MiraiFix by ChatGPT",
+  description: "Truth or Dare game with full control",
+  commandCategory: "game",
+  usages: "/td, /addtd, /td see, /td remove, /td rules",
+  cooldowns: 2
 };
 
 module.exports.onLoad = () => {
   if (!fs.existsSync(path)) {
-    const defaultData = {
-      truth: [
-        "তুমি কি কাউকে একতরফা ভালোবেসেছো?",
-        "তুমি শেষবার কখন কান্না করেছো?",
-        "তুমি কি চুরি করেছো কখনো?",
-        "তুমি কি এখনো কাউকে পছন্দ করো কিন্তু বলোনি?",
-        "তুমি কখনো কাউকে ঠকিয়েছো?",
-      ],
-      dare: [
-        "৫ বার টানা হেসে দেখাও",
-        "একটা মজার ভিডিও পাঠাও",
-        "যার নাম 'A' দিয়ে শুরু তাকে একটা পিক পাঠাও",
-        "মুখ বন্ধ রেখে ১০ শব্দ বলো",
-        "বিছানার নীচে কী আছে দেখাও",
-      ],
-    };
-    fs.writeFileSync(path, JSON.stringify(defaultData, null, 2));
+    fs.writeFileSync(path, JSON.stringify({ truth: [], dare: [] }, null, 2));
   }
 };
 
 module.exports.run = async function ({ event, api, args }) {
   const { threadID, messageID, senderID } = event;
-  const data = JSON.parse(fs.readFileSync(path, "utf8"));
-  const subCmd = args[0]?.toLowerCase();
 
-  if (!subCmd) {
-    return api.sendMessage("❓ Truth না Dare? বেছে নাও...\n👉 রিপ্লাই করো 'truth' অথবা 'dare'", threadID, (err, info) => {
+  const data = JSON.parse(fs.readFileSync(path));
+
+  const send = msg => api.sendMessage(msg, threadID, messageID);
+
+  if (args[0] == "rules") {
+    return send(
+      `🎮 𝗧𝗥𝗨𝗧𝗛 𝗢𝗥 𝗗𝗔𝗥𝗘 𝗥𝗨𝗟𝗘𝗦 🎯\n\n` +
+      `/td ➝ Truth না Dare খেলবে সেটা জিজ্ঞেস করবে\n` +
+      `/addtd truth প্রশ্ন - প্রশ্ন ➝ Truth যুক্ত করো\n` +
+      `/addtd dare প্রশ্ন - প্রশ্ন ➝ Dare যুক্ত করো\n` +
+      `/td remove truth প্রশ্ন ➝ Truth মুছবে\n` +
+      `/td remove dare প্রশ্ন ➝ Dare মুছবে\n` +
+      `/td see ➝ সমস্ত প্রশ্ন লিস্ট দেখাবে\n`
+    );
+  }
+
+  if (args[0] == "see" || args[0] == "list") {
+    const truthList = data.truth.map((q, i) => `✅ ${i + 1}. ${q}`).join("\n");
+    const dareList = data.dare.map((q, i) => `🎯 ${i + 1}. ${q}`).join("\n");
+
+    return send(
+      `📜 𝗧𝗥𝗨𝗧𝗛 𝗟𝗜𝗦𝗧:\n${truthList || "❌ কিছুই নেই"}\n\n` +
+      `📜 𝗗𝗔𝗥𝗘 𝗟𝗜𝗦𝗧:\n${dareList || "❌ কিছুই নেই"}`
+    );
+  }
+
+  if (args[0] == "remove") {
+    const type = args[1];
+    const question = args.slice(2).join(" ");
+    if (!["truth", "dare"].includes(type)) return send("❌ remove এর পর 'truth' অথবা 'dare' দিতে হবে।");
+    const list = data[type];
+    const index = list.indexOf(question);
+    if (index == -1) return send(`❌ ${type} লিস্টে এই প্রশ্নটি নেই!`);
+    list.splice(index, 1);
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return send(`✅ ${type} থেকে প্রশ্নটি সরানো হয়েছে: "${question}"`);
+  }
+
+  if (args[0] == "addtd") {
+    const type = args[1];
+    const content = args.slice(2).join(" ").split(" - ").map(e => e.trim()).filter(Boolean);
+
+    if (!["truth", "dare"].includes(type)) return send("❌ 'truth' বা 'dare' উল্লেখ করো।");
+    if (content.length == 0) return send("⚠️ প্রশ্ন দিন ' - ' দিয়ে আলাদা করে।");
+
+    const added = [];
+
+    for (const q of content) {
+      if (!data[type].includes(q)) {
+        data[type].push(q);
+        added.push(q);
+      }
+    }
+
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return send(`✅ ${added.length}টি ${type} যুক্ত হয়েছে:\n${added.map(q => `• ${q}`).join("\n")}`);
+  }
+
+  // Game start
+  if (args.length == 0) {
+    return api.sendMessage("🙂 আপনি কি চান? Truth নাকি Dare?\nউত্তর দিন: 'truth' অথবা 'dare'", threadID, (err, info) => {
       global.client.handleReply.push({
         name: this.config.name,
         messageID: info.messageID,
         author: senderID,
-        type: "choose",
+        type: "choose"
       });
-    }, messageID);
+    });
   }
 
-  if (subCmd == "rules") {
-    return api.sendMessage(
-      `📜 𝑻𝒓𝒖𝒕𝒉 𝒐𝒓 𝑫𝒂𝒓𝒆 𝑹𝒖𝒍𝒆𝒔:\n
-1. /td ➤ Truth বা Dare খেলবে
-2. /addtd truth - প্রশ্ন | প্রশ্ন
-3. /addtd dare - চ্যালেঞ্জ | চ্যালেঞ্জ
-4. /td remove truth - প্রশ্ন
-5. /td remove dare - চ্যালেঞ্জ
-6. /tdlist ➤ truth & dare লিস্ট
-7. /tdlist truth ➤ শুধুমাত্র truth গুলো
-8. /tdlist dare ➤ শুধুমাত্র dare গুলো`,
-      threadID, messageID
-    );
-  }
-
-  if (subCmd == "addtd") {
-    const type = args[1]?.toLowerCase();
-    if (!["truth", "dare"].includes(type)) return api.sendMessage("⚠️ add করতে হলে /addtd truth - প্রশ্ন দিন", threadID, messageID);
-    const content = args.slice(2).join(" ").split(" - ")[1];
-    if (!content) return api.sendMessage("⚠️ প্রশ্ন দিন /addtd truth - প্রশ্ন", threadID, messageID);
-
-    const newEntries = content.split("|").map(e => e.trim()).filter(Boolean);
-    data[type].push(...newEntries);
-    fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return api.sendMessage(`✅ ${newEntries.length} টি ${type.toUpperCase()} যোগ হয়েছে!`, threadID, messageID);
-  }
-
-  if (subCmd == "remove") {
-    const type = args[1]?.toLowerCase();
-    const q = args.slice(2).join(" ").split(" - ")[1];
-    if (!["truth", "dare"].includes(type) || !q) return api.sendMessage("⚠️ /td remove truth - প্রশ্ন", threadID, messageID);
-    const index = data[type].indexOf(q.trim());
-    if (index === -1) return api.sendMessage("❌ প্রশ্ন পাওয়া যায়নি!", threadID, messageID);
-    data[type].splice(index, 1);
-    fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return api.sendMessage(`🗑️ ${type.toUpperCase()} থেকে প্রশ্ন রিমুভ হয়েছে!`, threadID, messageID);
-  }
-
-  if (subCmd == "list" || subCmd == "tdlist") {
-    const showType = args[1]?.toLowerCase();
-    if (showType == "truth") {
-      const list = data.truth.map((q, i) => `${i + 1}. 🤔 ${q}`).join("\n");
-      return api.sendMessage(`📘 𝑻𝒓𝒖𝒕𝒉 𝑳𝒊𝒔𝒕:\n\n${list}`, threadID, messageID);
-    } else if (showType == "dare") {
-      const list = data.dare.map((q, i) => `${i + 1}. 😈 ${q}`).join("\n");
-      return api.sendMessage(`📕 𝑫𝒂𝒓𝒆 𝑳𝒊𝒔𝒕:\n\n${list}`, threadID, messageID);
-    } else {
-      const t = data.truth.map((q, i) => `${i + 1}. 🤔 ${q}`).join("\n");
-      const d = data.dare.map((q, i) => `${i + 1}. 😈 ${q}`).join("\n");
-      return api.sendMessage(`📘 Truth List:\n${t}\n\n📕 Dare List:\n${d}`, threadID, messageID);
-    }
-  }
-
-  return api.sendMessage("❓ অজানা সাবকমান্ড! `/td rules` লিখে গাইড দেখুন।", threadID, messageID);
+  // Default fallback
+  return send("⚠️ ভুল কমান্ড! ব্যবহার করুন /td rules");
 };
 
 module.exports.handleReply = async function ({ handleReply, event, api }) {
-  const { threadID, messageID, senderID, body } = event;
-  if (handleReply.author != senderID) return;
-  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  const data = JSON.parse(fs.readFileSync(path));
+  const { threadID, messageID, senderID } = event;
+  const send = msg => api.sendMessage(msg, threadID, messageID);
 
-  if (handleReply.type == "choose") {
-    const choice = body.toLowerCase();
-    if (choice == "truth") {
+  if (handleReply.type == "choose" && senderID == handleReply.author) {
+    const reply = event.body.toLowerCase();
+    if (reply == "truth") {
+      if (data.truth.length == 0) return send("❌ এখনো কোনো Truth নেই!");
       const q = data.truth[Math.floor(Math.random() * data.truth.length)];
-      return api.sendMessage(`🤔 Truth:\n${q}`, threadID, messageID);
-    } else if (choice == "dare") {
-      const d = data.dare[Math.floor(Math.random() * data.dare.length)];
-      return api.sendMessage(`😈 Dare:\n${d}`, threadID, messageID);
+      return send(`🧠 𝗧𝗥𝗨𝗧𝗛:\n${q}`);
+    } else if (reply == "dare") {
+      if (data.dare.length == 0) return send("❌ এখনো কোনো Dare নেই!");
+      const q = data.dare[Math.floor(Math.random() * data.dare.length)];
+      return send(`🔥 𝗗𝗔𝗥𝗘:\n${q}`);
     } else {
-      return api.sendMessage("⚠️ শুধু 'truth' বা 'dare' লিখো!", threadID, messageID);
+      return send("⚠️ শুধু 'truth' বা 'dare' লিখুন।");
     }
   }
 };
