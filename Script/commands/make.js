@@ -3,52 +3,41 @@ const fs = require("fs-extra");
 
 module.exports.config = {
   name: "make",
-  version: "1.0",
+  version: "1.0.0",
   hasPermssion: 0,
-  credits: "ashuu dont chng credit",
-  description: "Generate AI image from prompt (Anime & Realistic type)",
-  commandCategory: "image",
-  usages: "[prompt]",
-  cooldowns: 5,
-  dependencies: {
-    "axios": "",
-    "fs-extra": ""
-  }
+  credits: "Ashik x ChatGPT",
+  description: "Generate AI image from prompt",
+  commandCategory: "AI-Image",
+  usages: "/make [prompt]",
+  cooldowns: 3
 };
 
-module.exports.onStart = async function({ api, event, args }) {
+module.exports.run = async function ({ api, event, args }) {
   const prompt = args.join(" ");
-  if (!prompt) return api.sendMessage("❌ দয়া করে একটি প্রম্পট দিন! যেমন: /make anime girl", event.threadID, event.messageID);
+  if (!prompt)
+    return api.sendMessage("🖼️ | দয়া করে একটি প্রম্পট দিন...\nউদাহরণ: /make a boy standing in rain", event.threadID, event.messageID);
 
-  const uid = event.senderID;
-  const type = Math.random() > 0.5 ? "anime" : "realistic";
-
-  const loadingMsg = await api.sendMessage(`🧠 "${prompt}" থেকে ${type.toUpperCase()} ছবি বানানো হচ্ছে... অপেক্ষা করুন...`, event.threadID);
+  const msg = await api.sendMessage(`🎨 | "${prompt}" এর উপর ভিত্তি করে ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন...`, event.threadID);
 
   try {
-    const res = await axios.post("https://backend.craiyon.com/generate", { prompt: `${prompt} ${type} style` });
-
-    if (!res.data || !res.data.images || res.data.images.length == 0) {
-      return api.sendMessage("❌ ছবি জেনারেট করতে পারলাম না। আবার চেষ্টা করুন।", event.threadID, event.messageID);
+    // API 1: Free Anime & Realistic generator
+    const res = await axios.get(`https://ai-iamashik.onrender.com/generate?prompt=${encodeURIComponent(prompt)}`);
+    
+    if (!res.data || !res.data.url) {
+      return api.sendMessage("❌ | ছবি তৈরি করতে ব্যর্থ হলাম। আবার চেষ্টা করুন।", event.threadID, event.messageID);
     }
 
-    const base64Image = res.data.images[0];
-    const imageBuffer = Buffer.from(base64Image, "base64");
-    const path = __dirname + `/cache/${uid}_make.png`;
-    fs.writeFileSync(path, imageBuffer);
+    const imagePath = __dirname + `/cache/make_${event.senderID}.jpg`;
+    const imgRes = await axios.get(res.data.url, { responseType: "arraybuffer" });
+    fs.writeFileSync(imagePath, Buffer.from(imgRes.data, "utf-8"));
 
-    api.unsendMessage(loadingMsg.messageID);
-    api.sendMessage(
-      {
-        body: `✅ তোমার "${prompt}" প্রম্পট থেকে ${type.toUpperCase()} স্টাইল ছবি তৈরি হয়েছে।`,
-        attachment: fs.createReadStream(path)
-      },
-      event.threadID,
-      () => fs.unlinkSync(path),
-      event.messageID
-    );
-  } catch (error) {
-    api.unsendMessage(loadingMsg.messageID);
-    api.sendMessage(`❌ ছবি তৈরি করতে সমস্যা হয়েছে:\n${error.message}`, event.threadID, event.messageID);
+    return api.sendMessage({
+      body: `✅ | "${prompt}" অনুযায়ী তৈরি করা হয়েছে 👇`,
+      attachment: fs.createReadStream(imagePath)
+    }, event.threadID, () => fs.unlinkSync(imagePath), event.messageID);
+
+  } catch (e) {
+    console.log(e);
+    return api.sendMessage("🚫 | ছবি জেনারেট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন বা পরে চেষ্টা করুন।", event.threadID, event.messageID);
   }
 };
