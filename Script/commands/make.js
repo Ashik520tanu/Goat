@@ -1,47 +1,46 @@
-const axios = require('axios');
+const axios = require("axios");
 const fs = require("fs-extra");
-const request = require("request");
 
 module.exports.config = {
   name: "make",
-  version: "1.0.0",
+  version: "2.0.0",
   hasPermssion: 0,
-  credits: "DarkMaker",
-  description: "Generate AI image using prompt",
-  commandCategory: "ai",
+  credits: "yourName",
+  description: "Generate an image from prompt using AI",
+  commandCategory: "image",
   usages: "/make [prompt]",
-  cooldowns: 5,
+  cooldowns: 5
 };
 
-module.exports.run = async function ({ api, event, args }) {
+module.exports.run = async function({ api, event, args }) {
   const prompt = args.join(" ");
-  if (!prompt) return api.sendMessage("📌 দয়া করে একটি প্রম্পট দিন!\nযেমন: /make a girl sitting on moon", event.threadID, event.messageID);
+  if (!prompt) return api.sendMessage("🖌️ | দয়া করে একটি প্রম্পট দিন\n\nউদাহরণ: /make a cat sitting on moon", event.threadID, event.messageID);
 
-  const msg = `🎨 | '${prompt}' এর উপর ভিত্তি করে ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন...`;
-  api.sendMessage(msg, event.threadID, async (info) => {
-    try {
-      const res = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`, {
-        responseType: "stream"
-      });
+  const waitMsg = await api.sendMessage(`🎨 | “${prompt}” এর উপর ভিত্তি করে ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন...`, event.threadID);
 
-      const path = __dirname + `/cache/make-${event.senderID}.png`;
-      const writer = fs.createWriteStream(path);
+  try {
+    const response = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`, {
+      responseType: "stream"
+    });
 
-      res.data.pipe(writer);
+    const path = __dirname + `/cache/make_${event.senderID}.jpg`;
+    const writer = fs.createWriteStream(path);
+    response.data.pipe(writer);
 
-      writer.on("finish", () => {
-        api.sendMessage({
-          body: `✅ | "${prompt}" এর জন্য তৈরি ছবি:`,
-          attachment: fs.createReadStream(path)
-        }, event.threadID, () => fs.unlinkSync(path), info.messageID);
-      });
+    writer.on("finish", () => {
+      api.sendMessage({
+        body: `✅ | আপনার ছবিটি প্রস্তুত 🎉\n\nPrompt: ${prompt}`,
+        attachment: fs.createReadStream(path)
+      }, event.threadID, () => fs.unlinkSync(path), waitMsg.messageID);
+    });
 
-      writer.on("error", () => {
-        api.sendMessage("❌ | ছবি সেভ করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।", event.threadID, info.messageID);
-      });
-    } catch (e) {
-      console.error(e);
-      api.sendMessage("❌ | ছবি জেনারেট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন বা পরে চেষ্টা করুন।", event.threadID, event.messageID);
-    }
-  });
+    writer.on("error", (err) => {
+      console.error("❌ | Write error:", err);
+      api.sendMessage("⛔ | ছবি ফাইল সেভ করতে ব্যর্থ হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, waitMsg.messageID);
+    });
+
+  } catch (error) {
+    console.error("⛔ | Image generate failed:", error.message || error);
+    api.sendMessage("🚫 | ছবি জেনারেট করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, waitMsg.messageID);
+  }
 };
