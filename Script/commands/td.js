@@ -1,54 +1,126 @@
 const fs = require("fs");
+const path = __dirname + "/td_data.json";
 
-module.exports.config = { name: "td", version: "1.1.0", hasPermssion: 0, credits: "Nayan", description: "Truth or Dare Game with Custom Additions", commandCategory: "game", usages: "/td", cooldowns: 3 };
+module.exports.config = {
+  name: "td",
+  version: "1.1.0",
+  hasPermssion: 0,
+  credits: "ChatGPT-BD",
+  description: "Truth or Dare game",
+  commandCategory: "Fun",
+  usages: "[truth/dare/rules/addtd/remove/list]",
+  cooldowns: 3,
+};
 
-const DATA_FILE = __dirname + "/td_data.json";
+module.exports.onLoad = () => {
+  if (!fs.existsSync(path)) {
+    const defaultData = {
+      truth: [
+        "তুমি কি কাউকে একতরফা ভালোবেসেছো?",
+        "তুমি শেষবার কখন কান্না করেছো?",
+        "তুমি কি চুরি করেছো কখনো?",
+        "তুমি কি এখনো কাউকে পছন্দ করো কিন্তু বলোনি?",
+        "তুমি কখনো কাউকে ঠকিয়েছো?",
+      ],
+      dare: [
+        "৫ বার টানা হেসে দেখাও",
+        "একটা মজার ভিডিও পাঠাও",
+        "যার নাম 'A' দিয়ে শুরু তাকে একটা পিক পাঠাও",
+        "মুখ বন্ধ রেখে ১০ শব্দ বলো",
+        "বিছানার নীচে কী আছে দেখাও",
+      ],
+    };
+    fs.writeFileSync(path, JSON.stringify(defaultData, null, 2));
+  }
+};
 
-function ensureDataFile() { if (!fs.existsSync(DATA_FILE)) { const initialData = { truths: [], dares: [] }; fs.writeFileSync(DATA_FILE, JSON.stringify(initialData, null, 2)); } }
+module.exports.run = async function ({ event, api, args }) {
+  const { threadID, messageID, senderID } = event;
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
+  const subCmd = args[0]?.toLowerCase();
 
-module.exports.onLoad = () => ensureDataFile();
+  if (!subCmd) {
+    return api.sendMessage("❓ Truth না Dare? বেছে নাও...\n👉 রিপ্লাই করো 'truth' অথবা 'dare'", threadID, (err, info) => {
+      global.client.handleReply.push({
+        name: this.config.name,
+        messageID: info.messageID,
+        author: senderID,
+        type: "choose",
+      });
+    }, messageID);
+  }
 
-module.exports.run = async function ({ event, api, args }) { ensureDataFile(); const data = JSON.parse(fs.readFileSync(DATA_FILE));
+  if (subCmd == "rules") {
+    return api.sendMessage(
+      `📜 𝑻𝒓𝒖𝒕𝒉 𝒐𝒓 𝑫𝒂𝒓𝒆 𝑹𝒖𝒍𝒆𝒔:\n
+1. /td ➤ Truth বা Dare খেলবে
+2. /addtd truth - প্রশ্ন | প্রশ্ন
+3. /addtd dare - চ্যালেঞ্জ | চ্যালেঞ্জ
+4. /td remove truth - প্রশ্ন
+5. /td remove dare - চ্যালেঞ্জ
+6. /tdlist ➤ truth & dare লিস্ট
+7. /tdlist truth ➤ শুধুমাত্র truth গুলো
+8. /tdlist dare ➤ শুধুমাত্র dare গুলো`,
+      threadID, messageID
+    );
+  }
 
-const command = args[0]?.toLowerCase();
+  if (subCmd == "addtd") {
+    const type = args[1]?.toLowerCase();
+    if (!["truth", "dare"].includes(type)) return api.sendMessage("⚠️ add করতে হলে /addtd truth - প্রশ্ন দিন", threadID, messageID);
+    const content = args.slice(2).join(" ").split(" - ")[1];
+    if (!content) return api.sendMessage("⚠️ প্রশ্ন দিন /addtd truth - প্রশ্ন", threadID, messageID);
 
-if (command === "rules") { return api.sendMessage( `📌 Truth or Dare Game Commands:
+    const newEntries = content.split("|").map(e => e.trim()).filter(Boolean);
+    data[type].push(...newEntries);
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return api.sendMessage(`✅ ${newEntries.length} টি ${type.toUpperCase()} যোগ হয়েছে!`, threadID, messageID);
+  }
 
-👉 /td - Start the game 👉 Reply with 'truth' or 'dare' 👉 /addtd truth <text> - Add a custom truth 👉 /addtd dare <text> - Add a custom dare 👉 /tdlist - View all truths and dares 👉 /td remove truth <index> - Remove truth 👉 /td remove dare <index> - Remove dare`, event.threadID, event.messageID ); }
+  if (subCmd == "remove") {
+    const type = args[1]?.toLowerCase();
+    const q = args.slice(2).join(" ").split(" - ")[1];
+    if (!["truth", "dare"].includes(type) || !q) return api.sendMessage("⚠️ /td remove truth - প্রশ্ন", threadID, messageID);
+    const index = data[type].indexOf(q.trim());
+    if (index === -1) return api.sendMessage("❌ প্রশ্ন পাওয়া যায়নি!", threadID, messageID);
+    data[type].splice(index, 1);
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return api.sendMessage(`🗑️ ${type.toUpperCase()} থেকে প্রশ্ন রিমুভ হয়েছে!`, threadID, messageID);
+  }
 
-if (command === "remove" && args[1]) { const type = args[1]; const index = parseInt(args[2]) - 1; if (!['truth', 'dare'].includes(type) || isNaN(index)) return api.sendMessage("⚠️ Usage: /td remove truth|dare <index>", event.threadID);
+  if (subCmd == "list" || subCmd == "tdlist") {
+    const showType = args[1]?.toLowerCase();
+    if (showType == "truth") {
+      const list = data.truth.map((q, i) => `${i + 1}. 🤔 ${q}`).join("\n");
+      return api.sendMessage(`📘 𝑻𝒓𝒖𝒕𝒉 𝑳𝒊𝒔𝒕:\n\n${list}`, threadID, messageID);
+    } else if (showType == "dare") {
+      const list = data.dare.map((q, i) => `${i + 1}. 😈 ${q}`).join("\n");
+      return api.sendMessage(`📕 𝑫𝒂𝒓𝒆 𝑳𝒊𝒔𝒕:\n\n${list}`, threadID, messageID);
+    } else {
+      const t = data.truth.map((q, i) => `${i + 1}. 🤔 ${q}`).join("\n");
+      const d = data.dare.map((q, i) => `${i + 1}. 😈 ${q}`).join("\n");
+      return api.sendMessage(`📘 Truth List:\n${t}\n\n📕 Dare List:\n${d}`, threadID, messageID);
+    }
+  }
 
-if (type === "truth" && data.truths[index]) {
-  data.truths.splice(index, 1);
-} else if (type === "dare" && data.dares[index]) {
-  data.dares.splice(index, 1);
-} else {
-  return api.sendMessage("❌ Invalid index.", event.threadID);
-}
-fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-return api.sendMessage(`✅ Removed ${type} at position ${index + 1}`, event.threadID);
+  return api.sendMessage("❓ অজানা সাবকমান্ড! `/td rules` লিখে গাইড দেখুন।", threadID, messageID);
+};
 
-}
+module.exports.handleReply = async function ({ handleReply, event, api }) {
+  const { threadID, messageID, senderID, body } = event;
+  if (handleReply.author != senderID) return;
+  const data = JSON.parse(fs.readFileSync(path, "utf8"));
 
-if (command === "list" || command === "tdlist") { const truths = data.truths.map((t, i) => ${i + 1}. ${t}).join("\n"); const dares = data.dares.map((d, i) => ${i + 1}. ${d}).join("\n"); return api.sendMessage(📜 Truths:\n${truths || "None"}\n\n🎯 Dares:\n${dares || "None"}, event.threadID); }
-
-if (command === "addtd") { const type = args[1]; const text = args.slice(2).join(" "); if (!['truth', 'dare'].includes(type) || !text) return api.sendMessage("⚠️ Usage: /addtd truth|dare <text>", event.threadID);
-
-if (type === "truth") data.truths.push(text);
-else if (type === "dare") data.dares.push(text);
-fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
-return api.sendMessage(`✅ Added to ${type}: ${text}`, event.threadID);
-
-}
-
-if (!event.messageReply || !['truth', 'dare'].includes(event.body.toLowerCase())) { return api.sendMessage("🤔 আপনি কি চান? Truth না Dare? রিপ্লাই দিন 'truth' অথবা 'dare' লিখে!", event.threadID, (err, info) => { global.client.handleReply.push({ type: "td", name: module.exports.config.name, messageID: info.messageID }); }, event.messageID); } };
-
-module.exports.handleReply = async function ({ api, event, handleReply }) { ensureDataFile(); const data = JSON.parse(fs.readFileSync(DATA_FILE));
-
-const truths = data.truths.length ? data.truths : [ "তুমি কি কখনো কারো উপর ক্রাশ খেয়েছো যাকে তুমি চেনো না?", "তুমি কি কখনো কারো মেসেজ সিন করে রিপ্লাই করোনি?", "তুমি কি কখনো কাউকে মিথ্যা ভালোবাসি বলেছো?", "তোমার সবচেয়ে বড় ভয় কী?", "তুমি কি কখনো পরীক্ষায় নকল করেছো?", "তুমি কি কখনো কাউকে গোপনে পছন্দ করেছো?", "তুমি কি কখনো কাউকে অনুসরণ করেছো ফেসবুকে বা ইনস্টাগ্রামে?", "তুমি কি এখন কারো উপর ক্রাশ খাচ্ছো?", "শেষবার কাঁদছো কখন?", "তুমি কি কখনো কারো সাথে সম্পর্ক রেখে অন্য কারো সাথে কথা চালিয়েছো?", "তোমার জীবনের সবচেয়ে লজ্জার মুহূর্ত কোনটা?", "তুমি কি গোপনে কারো প্রোফাইল রেগুলার চেক করো?", "তুমি কি কখনো গালি দিয়ে পরে দুঃখ পেয়েছো?", "তুমি কি কখনো বান্ধবীর প্রাক্তনের উপর ক্রাশ খেয়েছো?", "তুমি কি এখনো এক্সকে ভুলতে পারোনি?", "তুমি কি কখনো ক্লাসে ঘুমিয়ে পরেছো?", "তুমি কি কখনো বন্ধুকে বিশ্বাস ভঙ্গ করেছো?", "তুমি কি নিজের সম্পর্কে মিথ্যা বলেছো কাউকে ইমপ্রেস করার জন্য?", "তোমার সবচেয়ে বাজে অভ্যাস কী?", "তুমি কি এখনো কোনো টেডি বিয়ার নিয়ে ঘুমাও?" ];
-
-const dares = data.dares.length ? data.dares : [ "তুমি এখনই নিজের একটা ফানি ছবি তুলে পাঠাও!", "তুমি এখনই তোমার প্রোফাইল পিকচারে একটা পটেটো লাগাও ১ ঘণ্টার জন্য!", "নিজের নাম ব্যাকওয়ার্ডে বলো, ভিডিও করো!", "যাকে পছন্দ করো তাকে এখনই মেসেজ করো 'তুমি কিউট!'", "নিজের ভয়েসে গরুর ডাক দাও এবং পাঠাও!", "এখনই ১০টা পুশ-আপ দাও, প্রমাণ চাওয়া হলে ছবি পাঠাতে হবে!", "নিজের গলার আওয়াজে গান গেয়ে পাঠাও!", "একটা বাজে জোক বলো এবং নিজে হাসো!", "৫ বার 'আমি একটা আলু' বলো ভিডিও করে!", "নিজের প্রোফাইলে লিখো 'আমি একজন পাগল প্রেমিক' ১ ঘণ্টার জন্য!", "একটা শিশু কণ্ঠে ৩০ সেকেন্ড কথা বলো!", "একটা ফানি নাচ করো এবং ভিডিও পাঠাও!", "পাঁচটা প্রাণীর আওয়াজ অনুকরণ করো!", "তোমার ফোনের শেষ মেসেজটা এখানে কপি করে পাঠাও!", "কারো নাম ছাড়া তাকে রোমান্টিক মেসেজ পাঠাও!", "নিজের নাক দিয়ে কথা বলার চেষ্টা করো (মজা করে)", "একটা নতুন নাম দিয়ে নিজের পরিচয় দাও পরবর্তী ৩ বার!", "বাঁ হাত দিয়ে নিজের নাম লেখো এবং ছবি পাঠাও!", "তুমি এখনই একটি অদ্ভুত শব্দ বলো, যেমন 'চিচিং ফাঁক!'", "যে তোমার সামনেই বসে আছে (বা গ্রুপে), তাকে একটা কমপ্লিমেন্ট দাও!" ];
-
-const choice = event.body.toLowerCase(); if (choice === "truth") { const truth = truths[Math.floor(Math.random() * truths.length)]; return api.sendMessage(🧠 Truth:\n${truth}, event.threadID); } else if (choice === "dare") { const dare = dares[Math.floor(Math.random() * dares.length)]; return api.sendMessage(🔥 Dare:\n${dare}, event.threadID); } else { return api.sendMessage("⚠️ রিপ্লাই দিন 'truth' অথবা 'dare' শুধু!", event.threadID); } };
-
-
+  if (handleReply.type == "choose") {
+    const choice = body.toLowerCase();
+    if (choice == "truth") {
+      const q = data.truth[Math.floor(Math.random() * data.truth.length)];
+      return api.sendMessage(`🤔 Truth:\n${q}`, threadID, messageID);
+    } else if (choice == "dare") {
+      const d = data.dare[Math.floor(Math.random() * data.dare.length)];
+      return api.sendMessage(`😈 Dare:\n${d}`, threadID, messageID);
+    } else {
+      return api.sendMessage("⚠️ শুধু 'truth' বা 'dare' লিখো!", threadID, messageID);
+    }
+  }
+};
