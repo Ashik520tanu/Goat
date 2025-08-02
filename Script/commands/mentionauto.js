@@ -1,37 +1,30 @@
 module.exports.config = {
   name: "mention",
-  version: "1.0.0",
-  hasPermission: 0,
-  credits: "ChatGPT",
-  description: "কারো মেনশন বার বার করবে",
-  commandCategory: "utility",
-  usages: "@mention [amount]",
-  cooldowns: 3,
+  version: "1.1.0",
+  hasPermssion: 2,
+  credits: "ashik",
+  description: "Mention someone multiple times in separate messages",
+  commandCategory: "fun",
+  usages: "/mention @tag amount",
+  cooldowns: 5,
 };
 
-module.exports.run = async function ({ api, event, args }) {
-  const mentions = Object.keys(event.mentions);
+module.exports.run = async function({ api, event, args }) {
+  if (!event.mentions || Object.keys(event.mentions).length === 0)
+    return api.sendMessage("❌ কাউকে মেনশন করতে হবে। উদাহরণ: /mention @name 10", event.threadID, event.messageID);
+
+  const mentionID = Object.keys(event.mentions)[0];
+  const name = event.mentions[mentionID];
   const amount = parseInt(args[args.length - 1]);
 
-  if (mentions.length === 0) {
-    return api.sendMessage("❌ আপনি কাউকে মেনশন করেননি।", event.threadID, event.messageID);
-  }
+  if (isNaN(amount) || amount < 1 || amount > 150)
+    return api.sendMessage("❌ সংখ্যা দিতে হবে ১ থেকে ১৫০ এর মধ্যে।", event.threadID, event.messageID);
 
-  if (isNaN(amount) || amount <= 0) {
-    return api.sendMessage("❌ অনুগ্রহ করে একটি সঠিক সংখ্যা দিন। যেমন: /mention @someone 5", event.threadID, event.messageID);
-  }
-
-  const tagID = mentions[0];
-  const tagName = event.mentions[tagID];
-  const tagObject = [{ id: tagID, tag: tagName }];
-
-  let messages = "";
   for (let i = 0; i < amount; i++) {
-    messages += `${tagName} \n`;
+    await new Promise(resolve => setTimeout(resolve, 500)); // Optional delay to avoid spam detection
+    api.sendMessage({
+      body: `${name}`,
+      mentions: [{ tag: name, id: mentionID }]
+    }, event.threadID);
   }
-
-  return api.sendMessage({
-    body: messages.trim(),
-    mentions: Array(amount).fill({ id: tagID, tag: tagName })
-  }, event.threadID, event.messageID);
 };
