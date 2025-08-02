@@ -1,92 +1,92 @@
 const fs = require("fs");
-const path = __dirname + "/data/sumu_status.json";
+const path = __dirname + "/../data/sumu_group.json";
 
 module.exports.config = {
   name: "sumu",
   version: "2.0.0",
   hasPermssion: 2,
   credits: "তোমার নাম",
-  description: "Control bot reply system with optional timeout",
+  description: "এই গ্রুপে বট রিপ্লাই অন/অফ করার সিস্টেম",
   commandCategory: "system",
-  usages: "/sumu on | /sumu off 10 min/hour/days",
-  cooldowns: 3,
+  usages: "[on/off] [সময়]",
+  cooldowns: 3
 };
 
+// অটো ফাইল তৈরি
 module.exports.onLoad = () => {
   if (!fs.existsSync(path)) {
-    fs.writeFileSync(path, JSON.stringify({ reply: true, timeout: null }, null, 2));
+    fs.writeFileSync(path, JSON.stringify({}, null, 2));
   }
 };
 
-function parseTime(amount, unit) {
-  if (!amount || !unit) return null;
-  switch (unit.toLowerCase()) {
-    case "min":
-    case "minute":
-    case "minutes":
-      return amount * 60000;
-    case "hour":
-    case "hours":
-      return amount * 60 * 60000;
-    case "day":
-    case "days":
-      return amount * 24 * 60 * 60000;
-    default:
-      return null;
-  }
-}
+// handleEvent: mute গ্রুপে বট কিছু বলবে না
+module.exports.handleEvent = async ({ event }) => {
+  const { threadID, body, senderID } = event;
+  if (!body || senderID == global.botID) return;
 
-module.exports.run = async function({ api, event, args }) {
   let data = JSON.parse(fs.readFileSync(path));
-  const input = args[0];
+  let groupData = data[threadID];
 
-  if (!input) {
-    return api.sendMessage(
-      `🔘 বট রিপ্লাই স্টেটাস: ${data.reply ? "চালু ✅" : "বন্ধ ❌"}\n` +
-      (data.timeout ? `⏳ টাইম সেট: ${new Date(data.timeout).toLocaleString()}` : ""),
-      event.threadID
-    );
+  if (groupData && groupData.status === "off") {
+    // অন করতে দিলে কাজ হোক
+    if (body.toLowerCase().startsWith("/sumu on")) return;
+    // বাকি সব কমান্ড কাজ না করুক
+    return;
+  }
+};
+
+// run: কমান্ড প্রসেস
+module.exports.run = async function ({ api, event, args }) {
+  const { threadID, messageID } = event;
+  const command = args[0];
+  const timeText = args.slice(1).join(" ");
+
+  let data = JSON.parse(fs.readFileSync(path));
+  if (!data[threadID]) data[threadID] = { status: "on", until: null };
+
+  if (command === "on") {
+    data[threadID].status = "on";
+    data[threadID].until = null;
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return api.sendMessage("✅ এই গ্রুপে বট এখন আবার কাজ করবে!", threadID, messageID);
   }
 
-  if (input === "off") {
-    let timeMsg = "";
-    if (args[1] && args[2]) {
-      const amount = parseInt(args[1]);
-      const unit = args[2];
-      const duration = parseTime(amount, unit);
-      if (!duration) return api.sendMessage("❗ সময় ফরম্যাট ভুল!\nসঠিক ফরম্যাট: `/sumu off 10 min/hour/days`", event.threadID);
-
-      data.reply = false;
-      data.timeout = Date.now() + duration;
-      timeMsg = `${amount} ${unit} এর জন্য`;
-    } else {
-      data.reply = false;
-      data.timeout = null;
+  if (command === "off") {
+    if (!timeText) {
+      data[threadID].status = "off";
+      data[threadID].until = null;
+      fs.writeFileSync(path, JSON.stringify(data, null, 2));
+      return api.sendMessage("❌ এই গ্রুপে বট এখন চুপ থাকবে।", threadID, messageID);
     }
 
+    let muteMs = convertTime(timeText);
+    if (!muteMs) return api.sendMessage("⚠️ সময় ভুল ফরম্যাট। লিখো যেমন: 10 min / 2 hour / 1 day", threadID, messageID);
+
+    data[threadID].status = "off";
+    data[threadID].until = Date.now() + muteMs;
     fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return api.sendMessage(`🤖 বট ${timeMsg || "পরবর্তী নির্দেশ না দেওয়া পর্যন্ত"} বন্ধ থাকবে!`, event.threadID);
+
+    setTimeout(() => {
+      let updated = JSON.parse(fs.readFileSync(path));
+      if (updated[threadID] && updated[threadID].until && Date.now() >= updated[threadID].until) {
+        updated[threadID].status = "on";
+        updated[threadID].until = null;
+        fs.writeFileSync(path, JSON.stringify(updated, null, 2));
+      }
+    }, muteMs);
+
+    return api.sendMessage(`⏳ ${timeText} এর জন্য বট এই গ্রুপে চুপ থাকবে।`, threadID, messageID);
   }
 
-  if (input === "on") {
-    data.reply = true;
-    data.timeout = null;
-    fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return api.sendMessage("✅ বট রিপ্লাই আবার চালু হলো!", event.threadID);
-  }
-
-  return api.sendMessage("❗ফরম্যাট ভুল!\nসঠিক উদাহরণ:\n/sumu off 10 min\n/sumu off 1 hour\n/sumu on", event.threadID);
+  return api.sendMessage("ℹ️ কমান্ড: /sumu on বা /sumu off [সময়]", threadID, messageID);
 };
 
-module.exports.handleEvent = async function({ api, event }) {
-  let data = JSON.parse(fs.readFileSync(path));
-  const now = Date.now();
-
-  if (data.timeout && now >= data.timeout) {
-    data.reply = true;
-    data.timeout = null;
-    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+// টাইম কনভার্টার
+function convertTime(text) {
+  text = text.toLowerCase();
+  const num = parseInt(text);
+  if (text.includes("min")) return num * 60 * 1000;
+  if (text.includes("hour")) return num * 60 * 60 * 1000;
+  if (text.includes("day")) return num * 24 * 60 * 60 * 1000;
+  return null;
   }
-
-  if (!data.reply) return;
-};
