@@ -6,7 +6,7 @@ const path = require("path");
 module.exports.config = {
   name: "fbcoverx",
   version: "1.2",
-  hasPermission: 0,
+  hasPermission: 2,
   credits: "Ashuu x ChatGPT",
   description: "Make FB cover photo with your name and profile pic",
   commandCategory: "image",
