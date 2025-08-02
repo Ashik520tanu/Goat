@@ -5,7 +5,7 @@ module.exports.config = {
   name: "imgur2",
   version: "1.0.0",
   hasPermssion: 0,
-  credits: "প্রিয়",
+  credits: "ashik",
   description: "Imgur এ একসাথে অনেক ছবি আপলোড করুন",
   commandCategory: "utility",
   usages: "/imgur2 (reply many images)",
