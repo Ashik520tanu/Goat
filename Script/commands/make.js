@@ -1,46 +1,52 @@
-const axios = require("axios");
-const fs = require("fs-extra");
+const axios = require('axios');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports.config = {
   name: "make",
-  version: "2.0.0",
+  version: "1.1.0",
   hasPermssion: 0,
-  credits: "yourName",
-  description: "Generate an image from prompt using AI",
-  commandCategory: "image",
-  usages: "/make [prompt]",
+  credits: "ashik",
+  description: "Generate images using Craiyon AI",
+  commandCategory: "ai",
+  usages: "[prompt]",
   cooldowns: 5
 };
 
 module.exports.run = async function({ api, event, args }) {
   const prompt = args.join(" ");
-  if (!prompt) return api.sendMessage("🖌️ | দয়া করে একটি প্রম্পট দিন\n\nউদাহরণ: /make a cat sitting on moon", event.threadID, event.messageID);
+  if (!prompt) return api.sendMessage("📌 উদাহরণ:\n/make একটি সুন্দর বাংলার দৃশ্য", event.threadID, event.messageID);
 
-  const waitMsg = await api.sendMessage(`🎨 | “${prompt}” এর উপর ভিত্তি করে ছবি তৈরি হচ্ছে... একটু অপেক্ষা করুন...`, event.threadID);
+  const waitMsg = await api.sendMessage("🧠 কল্পনা করা হচ্ছে... দয়া করে অপেক্ষা করুন ⏳", event.threadID);
 
   try {
-    const response = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`, {
-      responseType: "stream"
-    });
+    const response = await axios.post("https://backend.craiyon.com/generate", { prompt });
 
-    const path = __dirname + `/cache/make_${event.senderID}.jpg`;
-    const writer = fs.createWriteStream(path);
-    response.data.pipe(writer);
+    const images = response.data.images;
+    const attachments = [];
 
-    writer.on("finish", () => {
-      api.sendMessage({
-        body: `✅ | আপনার ছবিটি প্রস্তুত 🎉\n\nPrompt: ${prompt}`,
-        attachment: fs.createReadStream(path)
-      }, event.threadID, () => fs.unlinkSync(path), waitMsg.messageID);
-    });
+    for (let i = 0; i < images.length; i++) {
+      const imageBuffer = Buffer.from(images[i], 'base64');
+      const filePath = path.join(__dirname, `cache`, `craiyon_${i}.png`);
+      fs.writeFileSync(filePath, imageBuffer);
+      attachments.push(fs.createReadStream(filePath));
+    }
 
-    writer.on("error", (err) => {
-      console.error("❌ | Write error:", err);
-      api.sendMessage("⛔ | ছবি ফাইল সেভ করতে ব্যর্থ হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, waitMsg.messageID);
-    });
-
-  } catch (error) {
-    console.error("⛔ | Image generate failed:", error.message || error);
-    api.sendMessage("🚫 | ছবি জেনারেট করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, waitMsg.messageID);
+    await api.unsendMessage(waitMsg.messageID);
+    api.sendMessage({
+      body: `🎨 কল্পনার উপর ভিত্তি করে তৈরি করা হলো:\n"${prompt}"`,
+      attachment: attachments
+    }, event.threadID, () => {
+      // Clear cache after sending
+      images.forEach((_, i) => {
+        const filePath = path.join(__dirname, `cache`, `craiyon_${i}.png`);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      });
+    }, event.messageID);
+    
+  } catch (err) {
+    console.error(err);
+    await api.unsendMessage(waitMsg.messageID);
+    return api.sendMessage("❌ ছবি তৈরিতে ব্যর্থ হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, event.messageID);
   }
 };
