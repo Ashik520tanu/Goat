@@ -3,56 +3,70 @@ const fs = require("fs-extra");
 
 module.exports.config = {
   name: "make",
-  version: "2.3.0",
+  version: "1.1.0",
   hasPermssion: 0,
   credits: "ashik",
-  description: "Generate AI image from prompt using Pallinations API",
-  commandCategory: "image",
-  usages: "/make [prompt] or /make rules",
-  cooldowns: 5,
+  description: "Generate AI images from prompt",
+  commandCategory: "ai",
+  usages: "/make [prompt] | /make rules",
+  cooldowns: 3,
 };
 
-module.exports.run = async ({ api, event, args }) => {
-  const input = args.join(" ");
+module.exports.run = async function ({ api, event, args }) {
+  const prompt = args.join(" ");
 
-  // 📘 Show rules if user typed /make rules
-  if (input.toLowerCase() === "rules") {
-    const message = `
-🖼️ 𝙈𝘼𝙆𝙀 - 𝙎𝙪𝙥𝙥𝙤𝙧𝙩𝙚𝙙 𝙎𝙩𝙮𝙡𝙚𝙨 & 𝘾𝙖𝙩𝙚𝙜𝙤𝙧𝙞𝙚𝙨:
-
-🎨 Anime Character  
-🧍‍♂️ Realistic Portrait  
-🌆 Cyberpunk Scene  
-🏞️ Nature / Landscape  
-🕌 Islamic Calligraphy  
-📖 Bengali Cartoon  
-🎮 Game Character  
-❤️ Love / Sad / Attitude  
-
-✅ প্রতিটি প্রম্পট এ ১টি ছবি তৈরি হবে।
-    `;
-    return api.sendMessage(message.trim(), event.threadID, event.messageID);
+  if (!prompt) {
+    return api.sendMessage("📌 উদাহরণ: /make sad girl with rain", event.threadID, event.messageID);
   }
 
-  // 🖼️ Generate image from prompt
-  if (!input)
-    return api.sendMessage("❌ অনুগ্রহ করে একটি প্রম্পট দিন যেমন:\n/make sad anime boy", event.threadID, event.messageID);
-
-  const wait = await api.sendMessage("🔄 ছবি বানানো হচ্ছে, একটু অপেক্ষা করো...", event.threadID, event.messageID);
+  if (prompt.toLowerCase() === "rules") {
+    return api.sendMessage(
+      `🎨 AI Image Categories:
+• sad girl
+• fantasy boy
+• realistic girl
+• anime boy
+• horror face
+• angry villain
+• cute baby
+• islamic style
+• football player
+• korean boy
+\nযেকোনো একটি ক্যাটাগরি প্রম্পট হিসেবে ব্যবহার করো।`,
+      event.threadID,
+      event.messageID
+    );
+  }
 
   try {
-    const path = __dirname + `/cache/${event.senderID}_img.jpg`;
-    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}`;
-    const res = await axios.get(url, { responseType: "arraybuffer" });
-    fs.writeFileSync(path, Buffer.from(res.data, "binary"));
+    const waiting = await api.sendMessage("🔄 ছবি বানানো হচ্ছে, একটু অপেক্ষা করো...", event.threadID);
 
-    await api.sendMessage({
-      body: `✅ তোমার ছবি তৈরি হয়েছে!`,
-      attachment: fs.createReadStream(path)
-    }, event.threadID, () => fs.unlinkSync(path), event.messageID);
+    // New free API
+    const res = await axios.get(`https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}`, {
+      responseType: "stream",
+    });
 
-  } catch (err) {
-    console.error("❌ Pallinations error:", err);
-    api.sendMessage("❌ দুঃখিত, ছবি তৈরি করতে ব্যর্থ হয়েছে!", event.threadID, event.messageID);
+    const path = __dirname + `/cache/make_${event.senderID}.jpg`;
+    const writer = fs.createWriteStream(path);
+    res.data.pipe(writer);
+
+    writer.on("finish", () => {
+      api.sendMessage(
+        {
+          body: `✅ | তোমার প্রম্পট অনুযায়ী ছবি প্রস্তুত হয়েছে!`,
+          attachment: fs.createReadStream(path),
+        },
+        event.threadID,
+        () => fs.unlinkSync(path),
+        event.messageID
+      );
+    });
+
+    writer.on("error", () => {
+      api.sendMessage("❌ ছবি সংরক্ষণে সমস্যা হয়েছে। আবার চেষ্টা করো।", event.threadID, event.messageID);
+    });
+  } catch (e) {
+    console.error(e);
+    return api.sendMessage("❌ ছবি বানানো যায়নি। আবার চেষ্টা করো বা প্রম্পট চেঞ্জ করো।", event.threadID, event.messageID);
   }
 };
