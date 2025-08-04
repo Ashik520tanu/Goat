@@ -1,95 +1,93 @@
 const axios = require("axios");
 const ytdl = require("@neoxr/ytdl-core");
-const fs = require("fs");
+const fs = require("fs-extra");
 const path = require("path");
 
 module.exports.config = {
   name: "sing",
-  version: "1.0.1",
+  version: "1.1.0",
   hasPermssion: 0,
   credits: "ashik",
-  description: "Search and play a song as voice from YouTube",
+  description: "Play a song by name",
   commandCategory: "media",
   usages: "/sing [song name]",
-  cooldowns: 5
+  cooldowns: 5,
 };
 
-let globalSongCache = {};
-
-module.exports.run = async ({ api, event, args }) => {
-  const prompt = args.join(" ");
-  if (!prompt) return api.sendMessage("🎵 গানটির নাম লিখুন, যেমন: /sing মন শুধু মন ছুঁয়েছে", event.threadID, event.messageID);
+module.exports.run = async function ({ api, event, args }) {
+  const song = args.join(" ");
+  if (!song) return api.sendMessage("🎵 গানটির নাম লিখুন।\nউদাহরণ: /sing valo achi", event.threadID);
 
   try {
-    api.sendMessage("🔍 গান খোঁজা হচ্ছে, একটু অপেক্ষা করো...", event.threadID, event.messageID);
+    const msg = await api.sendMessage("🔍 গান খোঁজা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", event.threadID);
 
-    const res = await axios.get(`https://www.youtube.com/results?search_query=${encodeURIComponent(prompt)}`);
-    const videoIds = [...res.data.matchAll(/"videoId":"(.*?)"/g)].map(v => v[1]).filter((v, i, a) => a.indexOf(v) === i).slice(0, 6);
+    const { data } = await axios.get(`https://api.safone.dev/api/youtube/search?q=${encodeURIComponent(song)}`);
+    const videos = data?.data?.slice(0, 6);
+    if (!videos || videos.length === 0) return api.sendMessage("❌ কোনো গান পাওয়া যায়নি।", event.threadID, event.messageID);
 
-    if (videoIds.length === 0) return api.sendMessage("❌ কোনো গান খুঁজে পাওয়া যায়নি!", event.threadID, event.messageID);
+    let list = "";
+    const attachments = [];
+    const selectionMap = {};
 
-    const results = [];
-    globalSongCache[event.threadID] = [];
-
-    for (let i = 0; i < videoIds.length; i++) {
-      const id = videoIds[i];
-      const info = await ytdl.getInfo(id);
-      const { title, video_url, lengthSeconds, author, thumbnails } = info.videoDetails;
-      const duration = new Date(lengthSeconds * 1000).toISOString().substr(11, 8);
-      const channel = author.name;
-      const thumb = thumbnails[thumbnails.length - 1].url;
-      globalSongCache[event.threadID].push(id);
-      results.push(`${i + 1}. ${title}\n📺 চ্যানেল: ${channel}\n⏱️ দৈর্ঘ্য: ${duration}\n🌄 ${thumb}`);
-    }
+    videos.forEach((vid, i) => {
+      list += `${i + 1}. ${vid.title}\n📺 চ্যানেল: ${vid.channel}\n🕒 সময়: ${vid.duration}\n\n`;
+      attachments.push({
+        type: "photo",
+        url: vid.thumbnail,
+      });
+      selectionMap[i + 1] = vid.url;
+    });
 
     api.sendMessage(
-      `🎶 নিচের গানগুলো পাওয়া গেছে "${prompt}" এর জন্য:\n\n${results.join("\n\n")}\n\n➡️ যেটা চাই তার নম্বর রিপ্লাই করো (১-${videoIds.length})`,
+      {
+        body: `🎶 নিচের থেকে একটি গান নির্বাচন করুন:\n\n${list}✏️ রিপ্লাই করে 1-6 এর মধ্যে একটি নম্বর দিন`,
+        attachment: [],
+      },
       event.threadID,
       (err, info) => {
         global.client.handleReply.push({
           name: this.config.name,
           messageID: info.messageID,
           author: event.senderID,
-          type: "choose_song"
+          selectionMap,
         });
       }
     );
   } catch (e) {
     console.error(e);
-    api.sendMessage("⚠️ অনাকাঙ্ক্ষিত ত্রুটি হয়েছে!", event.threadID, event.messageID);
+    api.sendMessage("⚠️ সমস্যা হয়েছে গান খোঁজার সময়। পরে আবার চেষ্টা করুন।", event.threadID);
   }
 };
 
-module.exports.handleReply = async ({ api, event, handleReply }) => {
-  const index = parseInt(event.body.trim());
-  const threadID = event.threadID;
+module.exports.handleReply = async function ({ api, event, handleReply }) {
+  if (parseInt(event.body) < 1 || parseInt(event.body) > 6)
+    return api.sendMessage("❌ অনুগ্রহ করে 1 থেকে 6 এর মধ্যে একটি সংখ্যা দিন।", event.threadID, event.messageID);
 
-  if (isNaN(index) || index < 1 || index > globalSongCache[threadID]?.length) {
-    return api.sendMessage("❌ সঠিক নম্বর দিন!", threadID, event.messageID);
-  }
+  const url = handleReply.selectionMap[parseInt(event.body)];
+  const msg = await api.sendMessage("🎧 গান ডাউনলোড হচ্ছে, একটু অপেক্ষা করুন...", event.threadID);
 
-  const videoId = globalSongCache[threadID][index - 1];
-  const info = await ytdl.getInfo(videoId);
-  const title = info.videoDetails.title;
-  const outputPath = path.join(__dirname, `${threadID}_${videoId}.mp3`);
+  try {
+    const filePath = path.join(__dirname, `sing_${event.senderID}.mp3`);
+    const stream = await ytdl(url, {
+      filter: "audioonly",
+      quality: "highestaudio",
+    });
 
-  const stream = ytdl(videoId, { filter: 'audioonly' });
-  const writeStream = fs.createWriteStream(outputPath);
-
-  stream.pipe(writeStream);
-  stream.on('end', () => {
-    api.sendMessage(
-      {
-        body: `🎧 ${title}`,
-        attachment: fs.createReadStream(outputPath)
-      },
-      threadID,
-      () => fs.unlinkSync(outputPath)
-    );
-  });
-
-  stream.on('error', (err) => {
+    const writeStream = fs.createWriteStream(filePath);
+    stream.pipe(writeStream);
+    writeStream.on("finish", () => {
+      api.unsendMessage(msg.messageID);
+      api.sendMessage(
+        {
+          body: "✅ নিচে আপনার গান 🎵",
+          attachment: fs.createReadStream(filePath),
+        },
+        event.threadID,
+        () => fs.unlinkSync(filePath)
+      );
+    });
+  } catch (err) {
     console.error(err);
-    api.sendMessage("❌ গান ডাউনলোডে সমস্যা হয়েছে!", threadID);
-  });
+    api.sendMessage("❌ গান ডাউনলোড করতে সমস্যা হয়েছে।", event.threadID);
+  }
 };
