@@ -1,129 +1,91 @@
-{
-  "name": "ISLAMICK BOT",
-  "version": "10.1.1",
-  "description": "made by 𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_☢️",
-  "main": "Cyber.js",
-  "engines": {
-    "node": "20.x",
-    "npm": "10.0.0"
-  },
-  "scripts": {
-    "start": "node Ullash.js",
-    "login": "node login",
-    "test": "node --trace-warnings --use_strict --async-stack-traces mirai"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/cyber-ullash/CYBER-BOT-COMMUNITY.git"
-  },
-  "keywords": [
-    "bot",
-    "facebook",
-    "ullashproject",
-    "messenger",
-    "javasvript",
-    "ullash",
-    "cyberullash",
-    "cyberRajib ",
-    "islamick chat bot"
-  ],
-  "author": "Ullash ッ",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/cyber-ullash/CYBER-BOT-COMMUNITY/issues"
-  },
-  "homepage": "https://github.com/cyber-ullash/CYBER-BOT-COMMUNITY/issues",
-  "dependencies": {
-    "@neoxr/ytdl-core": "^1.1.0",
-    "@distube/ytdl-core": "^4.13.2",
-    "@miraipr0ject/assets": "^1.0.9",
-    "@replit/database": "^2.0.2",
-    "@supercharge/strings": "^1.28.0",
-    "akaneko": "^5.2.3",
-    "axios": "^0.26.1",
-    "body-parser": "^1.20.0",
-    "caesar-salad": "^2.1.0",
-    "canvas": "^2.9.3",
-    "chalk": "^4.1.2",
-    "chalkercli": "^1.6.4",
-    "cheerio": "^0.22.0",
-    "child_process": "^1.0.2",
-    "cloudscraper": "^4.6.0",
-    "colors": "^1.4.0",
-    "content-disposition": "^0.5.4",
-    "cron": "^2.1.0",
-    "crypto": "^1.0.1",
-    "crypto-js": "^4.1.1",
-    "discord-chatbot": "^2.1.0",
-    "discord-image-generation": "^1.4.13",
-    "discord.js": "^12.5.3",
-    "eval": "^0.1.8",
-    "express": "^4.19.2",
-    "extract-zip": "^2.0.1",
-    "fb-tools": "0.0.1-security",
-    "fca-priyansh": "^18.0.0",
-    "figlet": "^1.5.2",
-    "form-data": "^4.0.0",
-    "fs-extra": "^10.1.0",
-    "googlethis": "^1.2.9",
-    "https": "^1.0.0",
-    "idioms": "0.0.2",
-    "image-downloader": "^4.3.0",
-    "jimp": "^0.16.13",
-    "knights-canvas": "^1.3.7-a",
-    "listen": "^1.0.1",
-    "lodash": "^4.17.21",
-    "log": "^6.3.1",
-    "lyrics-finder": "^21.7.0",
-    "mal-scraper": "^2.11.4",
-    "minimist": "^1.2.6",
-    "moment-timezone": "^0.5.37",
-    "movie-info": "^2.0.5",
-    "ms": "^2.1.3",
-    "nhentai-api": "^3.4.3",
-    "node-cron": "^3.0.2",
-    "node-fetch": "^2.6.9",
-    "node-schedule": "^2.1.1",
-    "node-schedule-tz": "^1.2.1-4",
-    "node-superfetch": "^0.2.3",
-    "npm": "^9.4.2",
-    "npmlog": "^7.0.1",
-    "openai": "^3.2.1",
-    "opusscript": "0.0.8",
-    "os": "^0.1.2",
-    "pastebin-api": "^4.0.1",
-    "path": "^0.12.7",
-    "pidusage": "^3.0.0",
-    "ping-monitor": "^0.6.2",
-    "priyansh-fb-downloader": "^2.0.0",
-    "priyansh-ig-downloader": "^2.0.2",
-    "priyanshu-fca": "^1.0.0",
-    "random-cat-img": "^1.0.4",
-    "readline": "^1.3.0",
-    "request": "^2.88.2",
-    "semver": "^7.3.7",
-    "sequelize": "^6.21.4",
-    "simple-youtube-api": "^5.2.1",
-    "soundcloud-downloader": "^1.0.0",
-    "sqlite3": "^5.1.1",
-    "string-similarity": "^4.0.4",
-    "systeminformation": "^5.21.11",
-    "shaon-videos-downloader": "^1.0.1",
-    "tempy": "^0.4.0",
-    "tinyurl": "^1.1.7",
-    "to": "^0.2.9",
-    "to-zalgo": "^1.0.1",
-    "totp-generator": "0.0.14",
-    "uuid-apikey": "^1.5.3",
-    "vtuber-wiki": "^1.1.5",
-    "websocket-stream": "^5.5.2",
-    "wikijs": "^6.3.3",
-    "ws3-fca": "^1.0.23",
-    "youtube-search-api": "^1.1.0",
-    "youtubei.js": "^1.4.5",
-    "yt-search": "^2.10.4",
-    "ytdl-core": "^4.11.2",
-    "unofficial-fb-chat-api": "^1.0.0",
-    "zalgo": "0.0.1"
+const fs = require("fs-extra");
+const path = require("path");
+const ytdl = require("@neoxr/ytdl-core");
+const yts = require("yt-search");
+
+module.exports.config = {
+  name: "sing",
+  version: "1.0.1",
+  hasPermssion: 0,
+  credits: "ashik",
+  description: "Play any song as audio from YouTube",
+  commandCategory: "media",
+  usages: "[song name]",
+  cooldowns: 5
+};
+
+module.exports.run = async ({ api, event, args }) => {
+  const song = args.join(" ");
+  if (!song) return api.sendMessage("🎵 দয়া করে একটি গানের নাম লেখো...\n\nউদাহরণ: /sing suzume", event.threadID, event.messageID);
+
+  try {
+    const searchResults = await yts(song);
+    const videos = searchResults.videos.slice(0, 6);
+
+    if (videos.length === 0) return api.sendMessage("😥 কোনো গান পাওয়া যায়নি। আবার চেষ্টা করো!", event.threadID, event.messageID);
+
+    let msg = "🎶 নিচের গানগুলো পাওয়া গেছে:\n\n";
+    videos.forEach((v, i) => {
+      msg += `${i + 1}. ${v.title}\n🕒 ${v.timestamp} | 📺 ${v.author.name}\n\n`;
+    });
+    msg += "✏️ যেকোনো একটি গানের নম্বর রিপ্লাই করো। (যেমন: 1)";
+
+    return api.sendMessage({
+      body: msg,
+      attachment: await Promise.all(videos.map(v => global.utils.getStreamFromURL(v.thumbnail)))
+    }, event.threadID, (err, info) => {
+      global.client.handleReply.push({
+        type: "chooseSong",
+        name: module.exports.config.name,
+        messageID: info.messageID,
+        author: event.senderID,
+        videos
+      });
+    }, event.messageID);
+  } catch (err) {
+    console.error(err);
+    return api.sendMessage("❌ গান সার্চ করতে সমস্যা হচ্ছে। পরে আবার চেষ্টা করো।", event.threadID);
   }
-}
+};
+
+module.exports.handleReply = async ({ api, event, handleReply }) => {
+  const { author, videos } = handleReply;
+
+  if (event.senderID !== author) return;
+  const choice = parseInt(event.body);
+
+  if (isNaN(choice) || choice < 1 || choice > videos.length)
+    return api.sendMessage("❗ দয়া করে তালিকা থেকে একটি সঠিক নম্বর দিন!", event.threadID, event.messageID);
+
+  const selected = videos[choice - 1];
+  const url = selected.url;
+  const fileName = `${Date.now()}.mp3`;
+  const filePath = path.join(__dirname, "cache", fileName);
+
+  try {
+    api.sendMessage(`🎧 "${selected.title}" গানটি ডাউনলোড হচ্ছে...`, event.threadID, event.messageID);
+
+    const stream = ytdl(url, {
+      filter: "audioonly",
+      quality: "highestaudio"
+    });
+
+    const writeStream = fs.createWriteStream(filePath);
+    stream.pipe(writeStream);
+
+    writeStream.on("finish", () => {
+      api.sendMessage({
+        body: `✅ "${selected.title}" গানটি নিচে দেওয়া হলো 🎶`,
+        attachment: fs.createReadStream(filePath)
+      }, event.threadID, () => fs.unlinkSync(filePath));
+    });
+
+    stream.on("error", (error) => {
+      console.error(error);
+      return api.sendMessage("❌ গান ডাউনলোড করতে সমস্যা হয়েছে!", event.threadID);
+    });
+  } catch (err) {
+    console.error(err);
+    return api.sendMessage("❌ কোনো একটি ত্রুটি ঘটেছে গান প্লে করতে গিয়ে!", event.threadID);
+  }
+};
