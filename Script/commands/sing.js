@@ -1,93 +1,72 @@
-const axios = require("axios");
-const ytdl = require("@neoxr/ytdl-core");
-const fs = require("fs-extra");
-const path = require("path");
+const ytdl = require('@neoxr/ytdl-core');
+const ytSearch = require('yt-search');
+const fs = require('fs');
+const path = require('path');
 
 module.exports.config = {
   name: "sing",
   version: "1.1.0",
   hasPermssion: 0,
   credits: "ashik",
-  description: "Play a song by name",
+  description: "Search and play YouTube songs by name (Bangla & English supported)",
   commandCategory: "media",
   usages: "/sing [song name]",
   cooldowns: 5,
 };
 
 module.exports.run = async function ({ api, event, args }) {
-  const song = args.join(" ");
-  if (!song) return api.sendMessage("🎵 গানটির নাম লিখুন।\nউদাহরণ: /sing valo achi", event.threadID);
+  const query = args.join(" ");
+  if (!query) return api.sendMessage("🔎 গানটির নাম লিখুন...\nউদাহরণ: /sing হারানো সুর", event.threadID, event.messageID);
 
-  try {
-    const msg = await api.sendMessage("🔍 গান খোঁজা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", event.threadID);
+  const search = await ytSearch(query);
+  const videos = search.videos.slice(0, 6);
+  if (videos.length === 0) return api.sendMessage("😓 কোনো গান খুঁজে পাওয়া যায়নি।", event.threadID, event.messageID);
 
-    const { data } = await axios.get(`https://api.safone.dev/api/youtube/search?q=${encodeURIComponent(song)}`);
-    const videos = data?.data?.slice(0, 6);
-    if (!videos || videos.length === 0) return api.sendMessage("❌ কোনো গান পাওয়া যায়নি।", event.threadID, event.messageID);
+  let msg = `🎵 গানের তালিকা (রিপ্লাই দিয়ে নম্বর দিন):\n\n`;
+  videos.forEach((video, i) => {
+    msg += `${i + 1}. ${video.title}\n⏱ সময়: ${video.timestamp} | 📺 চ্যানেল: ${video.author.name}\n\n`;
+  });
 
-    let list = "";
-    const attachments = [];
-    const selectionMap = {};
+  global._singQueue = global._singQueue || {};
+  global._singQueue[event.senderID] = videos;
 
-    videos.forEach((vid, i) => {
-      list += `${i + 1}. ${vid.title}\n📺 চ্যানেল: ${vid.channel}\n🕒 সময়: ${vid.duration}\n\n`;
-      attachments.push({
-        type: "photo",
-        url: vid.thumbnail,
-      });
-      selectionMap[i + 1] = vid.url;
+  return api.sendMessage(msg, event.threadID, (err, info) => {
+    global.client.handleReply.push({
+      name: this.config.name,
+      messageID: info.messageID,
+      author: event.senderID,
+      type: "choose"
     });
-
-    api.sendMessage(
-      {
-        body: `🎶 নিচের থেকে একটি গান নির্বাচন করুন:\n\n${list}✏️ রিপ্লাই করে 1-6 এর মধ্যে একটি নম্বর দিন`,
-        attachment: [],
-      },
-      event.threadID,
-      (err, info) => {
-        global.client.handleReply.push({
-          name: this.config.name,
-          messageID: info.messageID,
-          author: event.senderID,
-          selectionMap,
-        });
-      }
-    );
-  } catch (e) {
-    console.error(e);
-    api.sendMessage("⚠️ সমস্যা হয়েছে গান খোঁজার সময়। পরে আবার চেষ্টা করুন।", event.threadID);
-  }
+  });
 };
 
 module.exports.handleReply = async function ({ api, event, handleReply }) {
-  if (parseInt(event.body) < 1 || parseInt(event.body) > 6)
-    return api.sendMessage("❌ অনুগ্রহ করে 1 থেকে 6 এর মধ্যে একটি সংখ্যা দিন।", event.threadID, event.messageID);
+  const index = parseInt(event.body);
+  const videos = global._singQueue?.[event.senderID];
 
-  const url = handleReply.selectionMap[parseInt(event.body)];
-  const msg = await api.sendMessage("🎧 গান ডাউনলোড হচ্ছে, একটু অপেক্ষা করুন...", event.threadID);
+  if (!videos || isNaN(index) || index < 1 || index > videos.length)
+    return api.sendMessage("❌ সঠিক সংখ্যা দিন (১-৬ এর মধ্যে)।", event.threadID, event.messageID);
 
-  try {
-    const filePath = path.join(__dirname, `sing_${event.senderID}.mp3`);
-    const stream = await ytdl(url, {
-      filter: "audioonly",
-      quality: "highestaudio",
-    });
+  const chosen = videos[index - 1];
+  const msg = `🎶 ডাউনলোড হচ্ছে: ${chosen.title}\n⏱ সময়: ${chosen.timestamp}`;
 
-    const writeStream = fs.createWriteStream(filePath);
-    stream.pipe(writeStream);
-    writeStream.on("finish", () => {
-      api.unsendMessage(msg.messageID);
-      api.sendMessage(
-        {
-          body: "✅ নিচে আপনার গান 🎵",
-          attachment: fs.createReadStream(filePath),
-        },
-        event.threadID,
-        () => fs.unlinkSync(filePath)
-      );
-    });
-  } catch (err) {
+  api.sendMessage(msg, event.threadID, event.messageID);
+
+  const stream = ytdl(chosen.url, { filter: 'audioonly' });
+  const tempPath = path.join(__dirname, `cache/${event.senderID}_song.mp3`);
+  const writeStream = fs.createWriteStream(tempPath);
+
+  stream.pipe(writeStream);
+
+  writeStream.on('finish', () => {
+    api.sendMessage({
+      body: `✅ গান প্রস্তুত 🎧\n${chosen.title}`,
+      attachment: fs.createReadStream(tempPath)
+    }, event.threadID, () => fs.unlinkSync(tempPath));
+  });
+
+  stream.on('error', (err) => {
     console.error(err);
-    api.sendMessage("❌ গান ডাউনলোড করতে সমস্যা হয়েছে।", event.threadID);
-  }
+    api.sendMessage("❌ ডাউনলোডে সমস্যা হয়েছে। আবার চেষ্টা করুন।", event.threadID);
+  });
 };
