@@ -11,7 +11,7 @@ module.exports.config = {
 
 module.exports.handleEvent = async function ({ api, event }) {
   const mentionedNames = Object.values(event.mentions || {});
-  const targetName = "IT'x  ASHUU▁▁➝ ���".toLowerCase();
+  const targetName = "Mohammad Ashik".toLowerCase();
 
   const isMentioned = mentionedNames.some(name =>
     name.toLowerCase().includes(targetName)
