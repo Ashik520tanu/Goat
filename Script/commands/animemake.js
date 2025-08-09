@@ -1,39 +1,51 @@
-const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
+const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
 
 module.exports.config = {
     name: "animemake",
     version: "1.0.0",
     hasPermssion: 0,
     credits: "ashik",
-    description: "ছবিকে Anime স্টাইলে রূপান্তর করো",
+    description: "ছবি কে anime style-এ কনভার্ট করে দিবে",
     commandCategory: "image",
-    usages: "[reply image]",
+    usages: "/animemake [reply করে ছবি পাঠাও]",
     cooldowns: 5
 };
 
-module.exports.run = async function({ api, event }) {
+module.exports.run = async function ({ api, event, args }) {
+    const { threadID, messageID, type, messageReply } = event;
+
+    if (type !== "message_reply" || !messageReply.attachments || messageReply.attachments.length === 0) {
+        return api.sendMessage("অনুগ্রহ করে `/animemake` কমান্ড লিখে কোনো ছবিতে reply করুন।", threadID, messageID);
+    }
+
+    const imgURL = messageReply.attachments[0].url;
+
+    api.sendMessage("🎨 আপনার ছবি Anime style-এ কনভার্ট হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", threadID, messageID);
+
     try {
-        if (!event.messageReply || !event.messageReply.attachments || event.messageReply.attachments.length === 0) {
-            return api.sendMessage("❌ অনুগ্রহ করে কোনো ছবিতে reply করে /anime লিখুন।", event.threadID, event.messageID);
-        }
+        // ফ্রি anime style API
+        const apiURL = `https://api.itsrose.rest/animefy?url=${encodeURIComponent(imgURL)}`;
 
-        const img = event.messageReply.attachments[0].url;
-        const apiUrl = `https://api.itsrose.life/image/toanime?url=${encodeURIComponent(img)}`;
-
-        api.sendMessage("🎨 আপনার ছবি Anime style-এ কনভার্ট হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", event.threadID, event.messageID);
-
-        const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
-        const imgPath = path.join(__dirname, 'cache', `anime_${Date.now()}.jpg`);
-        fs.writeFileSync(imgPath, Buffer.from(response.data, 'binary'));
-
-        api.sendMessage({ body: "✨ আপনার Anime style ছবি:", attachment: fs.createReadStream(imgPath) }, event.threadID, () => {
-            fs.unlinkSync(imgPath);
+        const response = await axios.get(apiURL, {
+            responseType: "arraybuffer"
         });
+
+        const imgPath = path.join(__dirname, `/cache/anime_${Date.now()}.jpg`);
+        fs.writeFileSync(imgPath, Buffer.from(response.data, "binary"));
+
+        api.sendMessage(
+            {
+                body: "✨ আপনার Anime Style ছবি প্রস্তুত!",
+                attachment: fs.createReadStream(imgPath)
+            },
+            threadID,
+            () => fs.unlinkSync(imgPath)
+        );
 
     } catch (error) {
         console.error(error);
-        api.sendMessage("❌ ছবিকে কনভার্ট করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।", event.threadID, event.messageID);
+        api.sendMessage("❌ দুঃখিত, Anime Style ছবিতে কনভার্ট করতে সমস্যা হয়েছে। পরে আবার চেষ্টা করুন।", threadID, messageID);
     }
 };
