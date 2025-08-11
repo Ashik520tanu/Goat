@@ -1,6 +1,6 @@
 let activeThreads = {};
 module.exports.config = {
-  name: "Mu2",
+  name: "murgi2",
   version: "1.3.0",
   hasPermssion: 2,
   credits: "Raihan Choudhury",
