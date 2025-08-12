@@ -8,10 +8,10 @@
     "allowInbox": false,
     "autoClean": true,
     "commandDisabled": [
-        "sim.js"
+        "xiver.js"
     ],
     "eventDisabled": [
-        "joinnoti.js"
+        "joinNoti.js"
     ],
     "EMAIL": "",
     "PASSWORD": "",
