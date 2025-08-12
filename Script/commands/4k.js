@@ -1,63 +1,54 @@
-const axios = require('axios');
-const fs = require('fs');
-
-const xyz = "ArYANAHMEDRUDRO";
+const axios = require("axios");
+const fs = require("fs");
 
 module.exports = {
- config: {
- name: "4k",
- version: "1.0.0",
- hasPermssion: 0,
- credits: "—͟͟͞͞𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️ × ArYAN",
- premium: false,
- description: "Enhance Photo - Image Generator",
- commandCategory: "Image Editing Tools",
- usages: "Reply to an image or provide image URL",
- cooldowns: 5,
- dependencies: {
- path: "",
- 'fs-extra': ""
- }
- },
+  config: {
+    name: "4k",
+    version: "1.1.0",
+    hasPermssion: 0,
+    credits: "ashik",
+    description: "Enhance image using free AI Super-Resolution",
+    commandCategory: "Image Editing Tools",
+    usages: "Reply to an image or provide image URL",
+    cooldowns: 5
+  },
 
- run: async function({ api, event, args }) {
- const tempImagePath = __dirname + '/cache/enhanced_image.jpg';
- const { threadID, messageID } = event;
+  run: async function({ api, event, args }) {
+    const tmpPath = __dirname + "/cache/enhanced.jpg";
+    const { threadID, messageID } = event;
+    const imageUrl = event.messageReply
+      ? event.messageReply.attachments[0].url
+      : args.join(" ");
 
- const imageUrl = event.messageReply ? 
- event.messageReply.attachments[0].url : 
- args.join(' ');
+    if (!imageUrl) {
+      return api.sendMessage("Please reply to an image or provide an image URL.", threadID, messageID);
+    }
 
- if (!imageUrl) {
- api.sendMessage("Please reply to an image or provide an image URL", threadID, messageID);
- return;
- }
+    const loading = await api.sendMessage("⏳ Processing your image, please wait...", threadID, messageID);
 
- try {
- const processingMsg = await api.sendMessage("𝐏𝐥𝐞𝐚𝐬𝐞 𝐖𝐚𝐢𝐭 𝐁𝐚𝐛𝐲...😘", threadID);
+    try {
+      // Using DeepAI's Super Resolution API
+      const response = await axios.post("https://api.deepai.org/api/torch-srgan", { image: imageUrl }, {
+        headers: { "Api-Key": "quickstart-QUdJIGlzIGNvbWluZy4uLi4K" } // free demo key
+      });
 
- const apiUrl = `https://aryan-xyz-upscale-api-phi.vercel.app/api/upscale-image?imageUrl=${encodeURIComponent(imageUrl)}&apikey=${xyz}`;
+      const enhancedUrl = response.data.output_url;
+      if (!enhancedUrl) throw new Error("No enhanced image returned.");
 
- const enhancementResponse = await axios.get(apiUrl);
- const enhancedImageUrl = enhancementResponse.data?.resultImageUrl;
+      const imgRes = await axios.get(enhancedUrl, { responseType: "arraybuffer" });
+      fs.writeFileSync(tmpPath, Buffer.from(imgRes.data, "binary"));
 
- if (!enhancedImageUrl) {
- throw new Error("Failed to get enhanced image URL.");
- }
+      await api.sendMessage(
+        { body: "✅ Image enhanced successfully!", attachment: fs.createReadStream(tmpPath) },
+        threadID,
+        () => fs.unlinkSync(tmpPath),
+        messageID
+      );
+      api.unsendMessage(loading.messageID);
 
- const enhancedImage = (await axios.get(enhancedImageUrl, { responseType: 'arraybuffer' })).data;
-
- fs.writeFileSync(tempImagePath, Buffer.from(enhancedImage, 'binary'));
-
- api.sendMessage({
- body: "✅ 𝐈𝐦𝐚𝐠𝐞 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲!",
- attachment: fs.createReadStream(tempImagePath)
- }, threadID, () => fs.unlinkSync(tempImagePath), messageID);
-
- api.unsendMessage(processingMsg.messageID);
-
- } catch (error) {
- api.sendMessage(`❌ Error`, threadID, messageID);
- }
- }
+    } catch (err) {
+      console.error(err);
+      return api.sendMessage("❌ Failed to enhance the image. Please try again later.", threadID, messageID);
+    }
+  }
 };
