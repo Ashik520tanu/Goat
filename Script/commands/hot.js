@@ -1,7 +1,7 @@
 module.exports.config = {
  name: "hot",
  version: "1.0.0",
- hasPermssion: 0,
+ hasPermssion: 2,
  credits: "only ashuu",
  description: "RANDOM islamic video",
  commandCategory: "Random video",
