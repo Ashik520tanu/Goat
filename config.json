@@ -1,7 +1,7 @@
 {
     "language": "en",
     "keyActive": "",
-    "DeveloperMode": false,
+    "DeveloperMode": true,
     "autoCreateDB": true,
     "notiGroup": true,
     "NOTIFICATION": true,
@@ -13,8 +13,8 @@
     "eventDisabled": [
         "asik.js"
     ],
-    "EMAIL": "",
-    "PASSWORD": "",
+    "EMAIL": "rdxqueenzara@gmail.com",
+    "PASSWORD": "rajraj",
     "OTPKEY": "",
     "BOTNAME": "জা্ঁতিঁর্ঁ পি্ঁচ্চি্ঁ ব্ঁউ্ঁ ত্যা্ঁহ <3",
     "PREFIX": "/",
