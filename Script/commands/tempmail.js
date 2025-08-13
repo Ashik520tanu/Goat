@@ -4,10 +4,10 @@ let tempMailData = {};
 
 module.exports.config = {
   name: "tempmail",
-  version: "1.1.0",
+  version: "1.2.0",
   hasPermssion: 0,
   credits: "ashik",
-  description: "Generate temp mail and read inbox code",
+  description: "Generate temp mail and check inbox",
   commandCategory: "utility",
   usages: "/tempmail",
   cooldowns: 5
@@ -26,13 +26,27 @@ module.exports.run = async function ({ api, event }) {
       domain: randomDomain
     };
 
-    api.sendMessage(`✉️ আপনার Temp Mail তৈরি হয়েছে:\n${email}\n\nইনবক্স চেক করতে এই মেইলের রিপ্লাই তে "code" লিখুন।`, event.threadID, event.messageID);
+    api.sendMessage(
+      `✉️ আপনার Temp Mail তৈরি হয়েছে:\n${email}\n\nইনবক্স চেক করতে এই মেসেজে রিপ্লাই তে "code" লিখুন।`,
+      event.threadID,
+      (err, info) => {
+        global.client.handleReply.push({
+          name: this.config.name,
+          messageID: info.messageID,
+          author: event.senderID,
+          type: "check"
+        });
+      },
+      event.messageID
+    );
   } catch (e) {
     api.sendMessage("❌ Temp mail তৈরি করতে সমস্যা হয়েছে।", event.threadID, event.messageID);
   }
 };
 
-module.exports.handleReply = async function ({ api, event }) {
+module.exports.handleReply = async function ({ api, event, handleReply }) {
+  if (handleReply.author !== event.senderID) return;
+
   if (event.body && event.body.toLowerCase() === "code") {
     const userMail = tempMailData[event.senderID];
     if (!userMail) {
@@ -47,7 +61,12 @@ module.exports.handleReply = async function ({ api, event }) {
         return api.sendMessage("📭 ইনবক্সে এখনো কোনো মেইল আসেনি।", event.threadID, event.messageID);
       }
 
-      let msgList = inbox.data.map(m => `📌 From: ${m.from}\nSubject: ${m.subject}\nID: ${m.id}`).join("\n\n");
+      let msgList = "";
+      for (let m of inbox.data) {
+        const mailContent = await axios.get(`https://www.1secmail.com/api/v1/?action=readMessage&login=${login}&domain=${domain}&id=${m.id}`);
+        msgList += `📌 From: ${mailContent.data.from}\nSubject: ${mailContent.data.subject}\nDate: ${mailContent.data.date}\n\n${mailContent.data.textBody || "[No text content]"}\n\n-----------------\n`;
+      }
+
       api.sendMessage(`📥 আপনার ইনবক্স:\n\n${msgList}`, event.threadID, event.messageID);
 
     } catch (e) {
