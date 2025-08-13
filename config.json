@@ -11,7 +11,7 @@
         "xiver.js"
     ],
     "eventDisabled": [
-        "join.js"
+        "joinNoti.js"
     ],
     "EMAIL": "",
     "PASSWORD": "",
