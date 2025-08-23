@@ -2,198 +2,81 @@ module.exports.config = {
  name: "info",
  version: "1.2.6",
  hasPermssion: 0,
- credits: "Shaon Ahmed",
- description: "info bot owner",
+ credits: "𝐒𝐡𝐚𝐡𝐚𝐝𝐚𝐭 𝐈𝐬𝐥𝐚𝐦",
+ description: "Bot information command",
  commandCategory: "For users",
- hide:true,
+ hide: true,
  usages: "",
  cooldowns: 5,
 };
 
-
-module.exports.run = async function ({ api, event, args, Users, permssion, getText ,Threads}) {
- const content = args.slice(1, args.length);
- const { threadID, messageID, mentions } = event;
- const { configPath } = global.client;
- const { ADMINBOT } = global.config;
- const { NDH } = global.config;
- const { userName } = global.data;
+module.exports.run = async function ({ api, event, args, Users, Threads }) {
+ const { threadID } = event;
  const request = global.nodemodule["request"];
  const fs = global.nodemodule["fs-extra"];
- const { writeFileSync } = global.nodemodule["fs-extra"];
- const mention = Object.keys(mentions);
- delete require.cache[require.resolve(configPath)];
- var config = require(configPath);
- const listAdmin = ADMINBOT || config.ADMINBOT || [];
- const listNDH = NDH || config.NDH || [];
- {
- const PREFIX = config.PREFIX;
- const namebot = config.BOTNAME;
- const { commands } = global.client;
- const threadSetting = (await Threads.getData(String(event.threadID))).data || 
- {};
- const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX 
- : global.config.PREFIX;
- const dateNow = Date.now();
- const time = process.uptime(),
- hours = Math.floor(time / (60 * 60)),
- minutes = Math.floor((time % (60 * 60)) / 60),
- seconds = Math.floor(time % 60);
- const data = [
- "Bạn không thể tìm được lệnh admin tại 'help' của MintBot",
- "Đừng mong chờ gì từ MintBot.",
- "Cái đoạn này á? Của SpermBot.",
- "Nếu muốn không lỗi lệnh thì hãy xài những lệnh có trong help vì những lệnh lỗi đã bị ẩn rồi.",
- "Đây là một con bot được các coder của MiraiProject nhúng tay vào.",
- "Muốn biết sinh nhật của Mint thì hãy xài 'birthday'.",
- "Cặc.",
- "Cút.",
- "Lồn.",
- "Bạn chưa biết.",
- "Bạn đã biết.",
- "Bạn sẽ biết.",
- "Không có gì là hoàn hảo, MintBot là ví dụ.",
- "Mirai dropped.",
- "MintBot là MiraiProject nhưng module là idea của SpermBot.",
- "Bạn không biết cách sử dụng MintBot? Đừng dùng nữa.",
- "Muốn chơi game? Qua bot khác mà chơi đây không rảnh",
- "MintBot có thể hiểu phụ nữ nhưng không thể có được họ.",
- "MintBot cân spam nhưng không có gì đáng để bạn spam."
- ];
- var link = [
- "https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F",
- "https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F",
- "https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F",
- "https://i.imgur.com/w6k2fsq.jpeg",
- "https://i.imgur.com/pBVUKAz.jpeg",
- ];
-
- var i = 1;
- var msg = [];
  const moment = require("moment-timezone");
- const date = moment.tz("Asia/Dhaka").format("hh:mm:ss");
- for (const idAdmin of listAdmin) {
- if (parseInt(idAdmin)) {
- const name = await Users.getNameUser(idAdmin);
- msg.push(`${i++}/ ${name} - ${idAdmin}`);
- }
- }
- var msg1 = [];
- for (const idNDH of listNDH) {
- if (parseInt(idNDH)) {
- const name1 = (await Users.getData(idNDH)).name
- msg1.push(`${i++}/ ${name1} - ${idNDH}`);
- }
- }
- var callback = () => 
- api.sendMessage({ body: `====「 ${namebot} 」====\n» Prefix system: ${PREFIX}\n» Prefix box: ${prefix}\n» Modules: ${commands.size}\n» Ping: ${Date.now() - dateNow}ms\n──────────────\n======「 ADMIN 」 ======\n${msg.join("\n")}\n──────────────\nBot has been working for ${hours} hour(s) ${minutes} minute(s) ${seconds} second(s)\n\n» Total users: ${global.data.allUserID.length} \n» Total threads: ${global.data.allThreadID.length}\n──────────────\n[thanks for using bot!!]`, attachment: fs.createReadStream(__dirname + "/cache/kensu.jpg"), }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/kensu.jpg"));
- return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/kensu.jpg")).on("close", () => callback()); 
- }
-}/**
- * @author Shaon Ahmed
- * @warn Do not edit code or edit credits
- */
 
-module.exports.config = {
- name: "info",
- version: "1.2.6",
- hasPermssion: 0,
- credits: "Shaon Ahmed",
- description: "🥰আসসালামু আলাইকুম 🥰",
- commandCategory: "For users",
- hide:true,
- usages: "",
- cooldowns: 5,
+ const { configPath } = global.client;
+ delete require.cache[require.resolve(configPath)];
+ const config = require(configPath);
+
+ const { commands } = global.client;
+ const threadSetting = (await Threads.getData(String(threadID))).data || {};
+ const prefix = threadSetting.hasOwnProperty("PREFIX") ? threadSetting.PREFIX : config.PREFIX;
+
+ const uptime = process.uptime();
+ const hours = Math.floor(uptime / 3600);
+ const minutes = Math.floor((uptime % 3600) / 60);
+ const seconds = Math.floor(uptime % 60);
+
+ const totalUsers = global.data.allUserID.length;
+ const totalThreads = global.data.allThreadID.length;
+
+ const msg = `╭⭓ ⪩ 𝐁𝐎𝐓𝐓 𝐈𝐍𝐅𝐎𝐑𝐌𝐀𝐓𝐈𝐎𝐍 ⪨
+│
+├─ 🤖 𝗕𝗼𝘁 𝗡𝗮𝗺𝗲 : 𝗡𝗢𝗩𝗔 🟡
+├─ ☢️ 𝗣𝗿𝗲𝗳𝗶𝘅 : ${config.PREFIX}
+├─ ♻️ 𝗣𝗿𝗲𝗳𝗶𝘅 𝗕𝗼𝘅 : ${prefix}
+├─ 🔶 𝗠𝗼𝗱𝘂𝗹𝗲𝘀 : ${commands.size}
+├─ 🔰 𝗣𝗶𝗻𝗴 : ${Date.now() - event.timestamp}ms
+│
+╰───────⭓
+
+╭⭓ ⪩ 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢 ⪨
+│
+├─ 👑 𝗡𝗮𝗺𝗲 : 𝐑𝐚𝐢𝐡𝐚𝐧 𝐂𝐡𝐨𝐮𝐝𝐡𝐮𝐫𝐲
+├─ 📲 𝗙𝗮𝗰𝗲𝗯𝗼𝗼𝗸 :
+│ facebook.com/61561359566206
+├─ 💌 𝗠𝗲𝘀𝘀𝗲𝗻𝗴𝗲𝗿 :
+│ m.me/61561359566206
+├─ 📞 𝗪𝗵𝗮𝘁𝘀𝗔𝗽𝗽 :
+│ wa.me/+8801604884635
+│
+╰───────⭓
+
+╭⭓ ⪩ 𝗔𝗖𝗧𝗜𝗩𝗜𝗧𝗜𝗘𝗦 ⪨
+│
+├─ ⏳ 𝗔𝗰𝘁𝗶𝘃𝗲 𝗧𝗶𝗺𝗲 : ${hours}h ${minutes}m ${seconds}s
+├─ 📣 𝗚𝗿𝗼𝘂𝗽𝘀 : ${totalThreads}
+├─ 🧿 𝗧𝗼𝘁𝗮𝗹 𝗨𝘀𝗲𝗿𝘀 : ${totalUsers}
+╰───────⭓
+
+❤️ 𝗧𝗵𝗮𝗻𝗸𝘀 𝗳𝗼𝗿 𝘂𝘀𝗶𝗻𝗴 🌺
+ 𝗡𝗢𝗩𝗔 🟡`;
+
+ const imgLinks = [
+ "https://i.imgur.com/8b7tEV9.jpeg",
+ "https://i.imgur.com/jVqKrB7.jpeg"
+ ];
+
+ const imgLink = imgLinks[Math.floor(Math.random() * imgLinks.length)];
+
+ const callback = () => {
+ api.sendMessage({
+ body: msg,
+ attachment: fs.createReadStream(__dirname + "/cache/info.jpg")
+ }, threadID, () => fs.unlinkSync(__dirname + "/cache/info.jpg"));
+ };
+
+ return request(encodeURI(imgLink)).pipe(fs.createWriteStream(__dirname + "/cache/info.jpg")).on("close", callback);
 };
-
-
-module.exports.run = async function ({ api, event, args, Users, permssion, getText ,Threads}) {
- const content = args.slice(1, args.length);
- const { threadID, messageID, mentions } = event;
- const { configPath } = global.client;
- const { ADMINBOT } = global.config;
- const { NDH } = global.config;
- const { userName } = global.data;
- const request = global.nodemodule["request"];
- const fs = global.nodemodule["fs-extra"];
- const { writeFileSync } = global.nodemodule["fs-extra"];
- const mention = Object.keys(mentions);
- delete require.cache[require.resolve(configPath)];
- var config = require(configPath);
- const listAdmin = ADMINBOT || config.ADMINBOT || [];
- const listNDH = NDH || config.NDH || [];
- {
- const PREFIX = config.PREFIX;
- const namebot = config.BOTNAME;
- const { commands } = global.client;
- const threadSetting = (await Threads.getData(String(event.threadID))).data || 
- {};
- const prefix = (threadSetting.hasOwnProperty("PREFIX")) ? threadSetting.PREFIX 
- : global.config.PREFIX;
- const dateNow = Date.now();
- const time = process.uptime(),
- hours = Math.floor(time / (60 * 60)),
- minutes = Math.floor((time % (60 * 60)) / 60),
- seconds = Math.floor(time % 60);
- const data = [
- "Bạn không thể tìm được lệnh admin tại 'help' của MintBot",
- "Đừng mong chờ gì từ MintBot.",
- "Cái đoạn này á? Của SpermBot.",
- "Nếu muốn không lỗi lệnh thì hãy xài những lệnh có trong help vì những lệnh lỗi đã bị ẩn rồi.",
- "Đây là một con bot được các coder của MiraiProject nhúng tay vào.",
- "Muốn biết sinh nhật của Mint thì hãy xài 'birthday'.",
- "Cặc.",
- "Cút.",
- "Lồn.",
- "Bạn chưa biết.",
- "Bạn đã biết.",
- "Bạn sẽ biết.",
- "Không có gì là hoàn hảo, MintBot là ví dụ.",
- "Mirai dropped.",
- "MintBot là MiraiProject nhưng module là idea của SpermBot.",
- "Bạn không biết cách sử dụng MintBot? Đừng dùng nữa.",
- "Muốn chơi game? Qua bot khác mà chơi đây không rảnh",
- "MintBot có thể hiểu phụ nữ nhưng không thể có được họ.",
- "MintBot cân spam nhưng không có gì đáng để bạn spam."
- ];
- var link = [
- "https://cdn.fbsbx.com/v/t59.2708-21/519363975_2356403754755911_4466089806778181355_n.gif?_nc_cat=101&ccb=1-7&_nc_sid=cf94fc&_nc_eui2=AeHcFm08LN68dr9Pwp4AKu56Rrgtbvuw269GuC1u-7Dbr1qa6Du_oREKFCHId0k83mSsZ2KSDFmCcSlpI-io7Dhh&_nc_ohc=xqbAkt8aVqcQ7kNvwHGv4rT&_nc_oc=AdkZlAT3yKIAsyj72i9C9WKnf0R0xYb3B-PukpHA4kXzY4Yq9BU0UpMknBWUWQUoFSI&_nc_zt=7&_nc_ht=cdn.fbsbx.com&_nc_gid=xQJ_-SUOPFilu-tBcMhbvA&oh=03_Q7cD2wGMYNM6XA0YDSDQ9-Vmc17hi2vbETpNDuQdCyJOHmxflQ&oe=6876496F",
- "https://i.imgur.com/a1mBcyO.jpeg",
- "https://i.imgur.com/a1mBcyO.jpeg",
- "https://i.imgur.com/09NM0cL.jpeg",
- "https://i.imgur.com/mL1ngW5.jpeg",
-
- ]; 
- var i = 1;
- var msg = [];
- const moment = require("moment-timezone");
- const date = moment.tz("Asia/Dhaka").format("hh:mm:ss");
- for (const idAdmin of listAdmin) {
- if (parseInt(idAdmin)) {
- const name = await Users.getNameUser(idAdmin);
- msg.push(`${i++}/ ${name} - ${idAdmin}`);
- }
- }
- var msg1 = [];
- for (const idNDH of listNDH) {
- if (parseInt(idNDH)) {
- const name1 = (await Users.getData(idNDH)).name
- msg1.push(`${i++}/ ${name1} - ${idNDH}`);
- }
- }
- var callback = () => 
- api.sendMessage({ body: 
- `🍀----আসসালামু আলাইকুম----🍀
-
-┏━━•❅•••❈•••❈•••❅•━━┓\n\n「 ${namebot} 」\n\n┗━━•❅•••❈•••❈•••❅•━━┛ \n\n______________________________\n\n↓↓_𝗥𝗢𝗕𝗢𝗧 𝗦𝗬𝗦𝗧𝗘𝗠 𝗜𝗡𝗙𝗢_↓↓\n\n» 𝗣𝗿𝗲𝗳𝗶𝘅 𝘀𝘆𝘀𝘁𝗲𝗺: ${PREFIX}\n\n» 𝗣𝗿𝗲𝗳𝗶𝘅 𝗯𝗼𝘅: ${prefix}\n\n» 𝗧𝗼𝘁𝗮𝗹 𝗠𝗼𝗱𝘂𝗹𝗲𝘀: ${commands.size}\n\n» 𝗣𝗶𝗻𝗴: ${Date.now() - dateNow}ms\n______________________________\n\n ↓↓_𝗥𝗢𝗕𝗢𝗧 𝗢𝗪𝗡𝗘𝗥 𝗜𝗡𝗙𝗢_↓↓\n\n 
-𝗡𝗔𝗠𝗘 :>ASHIK 
-
-𝗢𝘄𝗻𝗲𝗿 𝗜𝗱 𝗹𝗶𝗻𝗸:☞https://m.me/j/AbbtgPOtJtAnwqN8/ 
-
-𝗪𝗵𝗮𝘁𝘀𝗮𝗽𝗽☞dimu na tora boombing marbi
-
-______________________________\n\n----↓↓𝙍𝙤𝙗𝙤𝙩 𝙖𝙘𝙩𝙞𝙫𝙚 𝙩𝙞𝙢𝙚↓↓----\n\n ${hours} : ${minutes} : ${seconds} second(s)\n\n______________________________\n» 𝗧𝗢𝗧𝗔𝗟 𝗨𝗦𝗘𝗥𝗦: ${global.data.allUserID.length} \n\n» 𝗧𝗢𝗧𝗔𝗟 𝗚𝗥𝗢𝗨𝗣: ${global.data.allThreadID.length}\n______________________________\n\n thanks for using \n 𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 
-\n--------------------------------------------------\n\n☢️☣️⚠️`, attachment: fs.createReadStream(__dirname + "/cache/kensu.jpg"), }, event.threadID, () => fs.unlinkSync(__dirname + "/cache/kensu.jpg"));
- return request(encodeURI(link[Math.floor(Math.random() * link.length)])).pipe(fs.createWriteStream(__dirname + "/cache/kensu.jpg")).on("close", () => callback()); 
- }
-}
